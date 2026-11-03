@@ -1,0 +1,40 @@
+<ScrollViewer xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+              VerticalScrollBarVisibility="Auto">
+    <StackPanel Margin="28,22,28,18">
+        <TextBlock Text="Bulk Crap Uninstaller" Style="{StaticResource PageTitle}"/>
+        <TextBlock Style="{StaticResource PageSubtitle}"
+                   Text="By Marcin Szeniak (Klocman). Uninstalls classic desktop programs in bulk and cleans up what they leave behind."/>
+
+        <CheckBox x:Name="EnableCheck" Style="{StaticResource EnableToggle}" IsChecked="True" Content="Run Bulk Crap Uninstaller"/>
+        <TextBlock x:Name="UnavailableNote" Style="{StaticResource Muted}" Visibility="Collapsed"/>
+
+        <Border Style="{StaticResource Card}">
+            <StackPanel>
+                <TextBlock Text="What it does" Style="{StaticResource SectionTitle}" Margin="0,0,0,4"/>
+                <TextBlock Style="{StaticResource Body}"
+                           Text="Lists every desktop program (OEM utilities, trial antivirus, old software) so you can remove several at once, then finds their leftovers: registry keys, folders and shortcuts. It complements Win11Debloat, which handles the built-in Store apps."/>
+                <TextBlock Text="What it changes" Style="{StaticResource SectionTitle}"/>
+                <TextBlock Style="{StaticResource Body}"
+                           Text="Only what you select. UDP never uninstalls anything by itself and has no predefined uninstall list."/>
+                <TextBlock Text="Risks" Style="{StaticResource SectionTitle}"/>
+                <TextBlock Style="{StaticResource Body}"
+                           Text="Removing the wrong program can break hardware or games. Before BCU opens, UDP shows what not to remove: drivers, Visual C++ / .NET / DirectX runtimes, WebView2, Edge itself (removed later by UDP) and game anti-cheat services."/>
+                <TextBlock Text="How to undo" Style="{StaticResource SectionTitle}"/>
+                <TextBlock Style="{StaticResource Body}"
+                           Text="Uninstalls cannot be undone by UDP. Use the restore point created at the start, or reinstall the program."/>
+                <TextBlock Text="Why it runs here" Style="{StaticResource SectionTitle}"/>
+                <TextBlock Style="{StaticResource Body}"
+                           Text="After Win11Debloat, so the list is already shorter. Before the new browser is installed, so it cannot be removed by mistake. Startup entries are reviewed later in Autoruns, so BCU's startup manager is not needed."/>
+            </StackPanel>
+        </Border>
+
+        <TextBlock Text="Mode" Style="{StaticResource SectionTitle}"/>
+        <RadioButton x:Name="ModeRunOnce" GroupName="BcuMode" IsChecked="True" Content="Run once (portable version, deleted with UDP's temporary folder at the end)"/>
+        <TextBlock x:Name="RunOnceNote" Style="{StaticResource Muted}" Margin="22,0,0,6"/>
+        <RadioButton x:Name="ModeInstall" GroupName="BcuMode" Content="Keep it installed (installed with winget)"/>
+
+        <TextBlock Style="{StaticResource Muted}" Margin="0,12,0,0"
+                   Text="Source: github.com/BCUninstaller/Bulk-Crap-Uninstaller (Apache-2.0). BCU is not digitally signed, so UDP checks the SHA256 digest that GitHub publishes for the release file (portable) or relies on winget's hash check (installed)."/>
+    </StackPanel>
+</ScrollViewer>

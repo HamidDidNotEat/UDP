@@ -1,0 +1,54 @@
+<ScrollViewer xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+              VerticalScrollBarVisibility="Auto">
+    <StackPanel Margin="28,22,28,18">
+        <TextBlock Text="Edge removal" Style="{StaticResource PageTitle}"/>
+        <TextBlock Style="{StaticResource PageSubtitle}"
+                   Text="Removes Microsoft Edge with AveYo's Edge_Removal script, in any country, and always keeps WebView2."/>
+
+        <CheckBox x:Name="EnableCheck" Style="{StaticResource EnableToggle}" IsChecked="False" Content="Remove Microsoft Edge"/>
+        <TextBlock x:Name="UnavailableNote" Style="{StaticResource Muted}" Visibility="Collapsed"/>
+
+        <Border x:Name="NoBrowserWarning" Style="{StaticResource WarningBox}" Visibility="Collapsed">
+            <StackPanel>
+                <TextBlock Style="{StaticResource Body}" FontWeight="SemiBold"
+                           Text="No other browser is installed and the 'Alternative browser' step is off. Removing Edge would leave you without a web browser."/>
+                <CheckBox x:Name="ConfirmNoBrowserCheck" Margin="0,4,0,0">
+                    <TextBlock TextWrapping="Wrap" Text="I understand. Remove Edge anyway."/>
+                </CheckBox>
+            </StackPanel>
+        </Border>
+
+        <Border Style="{StaticResource Card}">
+            <StackPanel>
+                <TextBlock Text="Why not Microsoft's own uninstaller?" Style="{StaticResource SectionTitle}" Margin="0,0,0,4"/>
+                <TextBlock Style="{StaticResource Body}"
+                           Text="Microsoft only allows a normal Edge uninstall in the European Economic Area (EEA), because of the EU Digital Markets Act. In Switzerland and every other non-EEA country the uninstall option does not work, so UDP uses AveYo's script, which works everywhere."/>
+                <TextBlock Text="WebView2 is always kept" Style="{StaticResource SectionTitle}"/>
+                <TextBlock Style="{StaticResource Body}"
+                           Text="WebView2 is a separate copy of the Edge engine that many apps use to show web content (for example Teams, Outlook, Widgets, game launchers and installers). Removing it breaks those apps, so UDP always keeps it, whatever the script's own default is."/>
+                <TextBlock Text="Things to know" Style="{StaticResource SectionTitle}"/>
+                <TextBlock Style="{StaticResource Body}"
+                           Text="Edge may come back after a major Windows feature update. Just run UDP again: the step skips itself when Edge is not installed."/>
+                <TextBlock Style="{StaticResource Body}"
+                           Text="Some Windows links (search results, widgets, help links) are hard-wired to open Edge. The script redirects them to your default browser, but a few may still try to open Edge."/>
+                <TextBlock Style="{StaticResource Body}"
+                           Text="This step runs after the browser step, so another browser is already installed when Edge is removed."/>
+                <TextBlock Text="How to undo" Style="{StaticResource SectionTitle}"/>
+                <TextBlock Style="{StaticResource Body}"
+                           Text="Reinstall Edge from microsoft.com/edge, or use UDP's restore point."/>
+            </StackPanel>
+        </Border>
+
+        <TextBlock Text="Also remove (optional)" Style="{StaticResource SectionTitle}"/>
+        <CheckBox x:Name="WidgetsCheck" Content="Widgets (Windows Web Experience Pack)"/>
+        <TextBlock Style="{StaticResource Muted}" Margin="22,0,0,6"
+                   Text="Win11Debloat's defaults already turn widgets off; this removes the package itself."/>
+        <CheckBox x:Name="XSocialCheck" Content="Gaming Services"/>
+        <TextBlock Style="{StaticResource Muted}" Margin="22,0,0,6"
+                   Text="Not recommended if you play games from the Xbox app or PC Game Pass: they need Gaming Services to install and run."/>
+
+        <TextBlock Style="{StaticResource Muted}" Margin="0,12,0,0"
+                   Text="Source: github.com/AveYo/fox, file Edge_Removal.bat, pinned to one commit and checked against its SHA256 (see config/tools.json). The repository has no license file; UDP does not redistribute the script, it downloads it from the official repository when it runs."/>
+    </StackPanel>
+</ScrollViewer>

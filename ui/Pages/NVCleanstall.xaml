@@ -1,0 +1,33 @@
+<ScrollViewer xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+              VerticalScrollBarVisibility="Auto">
+    <StackPanel Margin="28,22,28,18">
+        <TextBlock Text="NVCleanstall" Style="{StaticResource PageTitle}"/>
+        <TextBlock Style="{StaticResource PageSubtitle}"
+                   Text="By TechPowerUp. Installs the official NVIDIA driver with only the parts you choose. Offered because an NVIDIA graphics card was detected."/>
+
+        <CheckBox x:Name="EnableCheck" Style="{StaticResource EnableToggle}" IsChecked="False" Content="Run NVCleanstall"/>
+        <TextBlock x:Name="UnavailableNote" Style="{StaticResource Muted}" Visibility="Collapsed"/>
+        <TextBlock x:Name="GpuNote" Style="{StaticResource Muted}" Margin="0,0,0,8"/>
+
+        <Border Style="{StaticResource Card}">
+            <StackPanel>
+                <TextBlock Text="What it does" Style="{StaticResource SectionTitle}" Margin="0,0,0,4"/>
+                <TextBlock Style="{StaticResource Body}"
+                           Text="Downloads the official driver from NVIDIA and builds an installer without the parts you do not need (telemetry, the NVIDIA App, extra components). You pick everything in its own window; UDP waits until you close it."/>
+                <TextBlock Text="Recommended choices" Style="{StaticResource SectionTitle}"/>
+                <TextBlock Style="{StaticResource Body}"
+                           Text="Components: Display driver, PhysX, and HD Audio only if your sound goes through HDMI or DisplayPort. Tweaks: disable installer telemetry and advertising, and perform a clean installation."/>
+                <TextBlock Text="Trade-off" Style="{StaticResource SectionTitle}"/>
+                <TextBlock Style="{StaticResource Body}"
+                           Text="Without the NVIDIA App you lose DLSS Override, ShadowPlay (Instant Replay, recording) and Smooth Motion. Alternatives: NVIDIA Profile Inspector for per-game driver settings and OBS Studio for recording."/>
+                <TextBlock Text="How to undo" Style="{StaticResource SectionTitle}"/>
+                <TextBlock Style="{StaticResource Body}"
+                           Text="Install the standard driver from nvidia.com at any time. NVCleanstall stays installed so you can use it for future driver updates; uninstall it from Settings > Apps if you do not want it."/>
+            </StackPanel>
+        </Border>
+
+        <TextBlock Style="{StaticResource Muted}" Margin="0,8,0,0"
+                   Text="Source: techpowerup.com (freeware), installed with winget. A manually downloaded installer must be signed by TechPowerUp LLC."/>
+    </StackPanel>
+</ScrollViewer>

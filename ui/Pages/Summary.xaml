@@ -1,0 +1,25 @@
+<ScrollViewer xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+              VerticalScrollBarVisibility="Auto">
+    <StackPanel Margin="28,22,28,18">
+        <TextBlock Text="Summary" Style="{StaticResource PageTitle}"/>
+        <TextBlock Style="{StaticResource PageSubtitle}"
+                   Text="This is everything UDP will do, in this order. Go back to change anything, or click Start."/>
+
+        <Border x:Name="DryRunBanner" Style="{StaticResource InfoBox}" Visibility="Collapsed">
+            <TextBlock Style="{StaticResource Body}" Margin="0" FontWeight="SemiBold"
+                       Text="Dry run: nothing will be changed. Tools are downloaded and verified, and every action is written to the log."/>
+        </Border>
+
+        <StackPanel x:Name="SummaryPanel"/>
+
+        <Border Style="{StaticResource WarningBox}">
+            <StackPanel>
+                <TextBlock Style="{StaticResource Body}"
+                           Text="Close your other programs and save your work first. Some steps restart Explorer, and UDP asks you to restart Windows once at the end."/>
+                <TextBlock Style="{StaticResource Body}" Margin="0"
+                           Text="Programs installed with winget are installed with --accept-package-agreements: by clicking Start you accept the license of each tool listed above (see each tool's page)."/>
+            </StackPanel>
+        </Border>
+    </StackPanel>
+</ScrollViewer>

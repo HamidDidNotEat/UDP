@@ -1,0 +1,15 @@
+<ScrollViewer xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+              VerticalScrollBarVisibility="Auto">
+    <StackPanel Margin="28,22,28,18">
+        <TextBlock x:Name="RunTitle" Text="Running" Style="{StaticResource PageTitle}"/>
+        <TextBlock x:Name="CurrentStepText" Style="{StaticResource PageSubtitle}" Text="Starting..."/>
+
+        <Border Style="{StaticResource Card}">
+            <StackPanel x:Name="StepList"/>
+        </Border>
+
+        <TextBlock Style="{StaticResource Muted}"
+                   Text="Every action is written to the log below. When a tool needs you, UDP explains what to do first, opens it, and continues by itself when you close it. Only one tool window is open at a time."/>
+    </StackPanel>
+</ScrollViewer>

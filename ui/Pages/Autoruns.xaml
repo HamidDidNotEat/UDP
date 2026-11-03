@@ -1,0 +1,32 @@
+<ScrollViewer xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+              VerticalScrollBarVisibility="Auto">
+    <StackPanel Margin="28,22,28,18">
+        <TextBlock Text="Autoruns" Style="{StaticResource PageTitle}"/>
+        <TextBlock Style="{StaticResource PageSubtitle}"
+                   Text="By Microsoft Sysinternals. Shows everything that starts with Windows so you can switch off what you do not need."/>
+
+        <CheckBox x:Name="EnableCheck" Style="{StaticResource EnableToggle}" IsChecked="True" Content="Review startup entries with Autoruns"/>
+        <TextBlock x:Name="UnavailableNote" Style="{StaticResource Muted}" Visibility="Collapsed"/>
+
+        <Border Style="{StaticResource Card}">
+            <StackPanel>
+                <TextBlock Text="What it does" Style="{StaticResource SectionTitle}" Margin="0,0,0,4"/>
+                <TextBlock Style="{StaticResource Body}"
+                           Text="Lists startup programs, services, drivers, scheduled tasks, Explorer add-ons and more, far more than Task Manager shows. It is a manual review tool: nothing changes unless you untick an entry."/>
+                <TextBlock Text="How to use it" Style="{StaticResource SectionTitle}"/>
+                <TextBlock Style="{StaticResource Body}"
+                           Text="Turn on 'Options > Hide Microsoft Entries' so only third-party entries remain. Untick entries to disable them instead of deleting them: an unticked entry can be ticked again later. UDP shows these tips again just before Autoruns opens."/>
+                <TextBlock Text="Why it runs last" Style="{StaticResource SectionTitle}"/>
+                <TextBlock Style="{StaticResource Body}"
+                           Text="So it shows only the startup entries that are left after all uninstalls."/>
+                <TextBlock Text="How to undo" Style="{StaticResource SectionTitle}"/>
+                <TextBlock Style="{StaticResource Body}"
+                           Text="Open Autoruns again and tick the entry back on. The restore point also covers these changes."/>
+            </StackPanel>
+        </Border>
+
+        <TextBlock Style="{StaticResource Muted}" Margin="0,8,0,0"
+                   Text="Source: download.sysinternals.com (Sysinternals license). The download must be signed by Microsoft Corporation, otherwise the step is skipped. It is portable and deleted at the end."/>
+    </StackPanel>
+</ScrollViewer>

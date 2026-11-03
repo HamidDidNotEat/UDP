@@ -1,0 +1,39 @@
+<ScrollViewer xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+              VerticalScrollBarVisibility="Auto">
+    <StackPanel Margin="28,22,28,18">
+        <TextBlock Text="Alternative browser" Style="{StaticResource PageTitle}"/>
+        <TextBlock Style="{StaticResource PageSubtitle}"
+                   Text="Installs another browser before Edge is removed, so you are never left without one."/>
+
+        <CheckBox x:Name="EnableCheck" Style="{StaticResource EnableToggle}" IsChecked="True" Content="Install an alternative browser"/>
+        <TextBlock x:Name="UnavailableNote" Style="{StaticResource Muted}" Visibility="Collapsed"/>
+
+        <TextBlock Text="Browser" Style="{StaticResource SectionTitle}"/>
+        <RadioButton x:Name="FirefoxRadio" GroupName="Browser" IsChecked="True" Content="Mozilla Firefox (recommended: independent engine, full uBlock Origin support)"/>
+        <RadioButton x:Name="ChromeRadio" GroupName="Browser" Content="Google Chrome"/>
+        <RadioButton x:Name="BraveRadio" GroupName="Browser" Content="Brave (built-in ad and tracker blocking)"/>
+        <TextBlock x:Name="InstalledNote" Style="{StaticResource Muted}" Margin="22,2,0,6"/>
+
+        <TextBlock Text="Privacy extensions" Style="{StaticResource SectionTitle}"/>
+        <CheckBox x:Name="ExtensionsCheck" Content="Install privacy extensions automatically through browser policies"/>
+        <StackPanel x:Name="ExtensionsPanel" Margin="22,2,0,4"/>
+        <Border Style="{StaticResource InfoBox}">
+            <TextBlock x:Name="ManagedNote" Style="{StaticResource Body}" Margin="0"/>
+        </Border>
+
+        <Border Style="{StaticResource Card}">
+            <StackPanel>
+                <TextBlock Text="What it changes" Style="{StaticResource SectionTitle}" Margin="0,0,0,4"/>
+                <TextBlock Style="{StaticResource Body}"
+                           Text="Installs the browser with winget (or the official installer if winget fails). With extensions ticked, UDP writes one policy value, ExtensionSettings, under HKLM\SOFTWARE\Policies for that browser. Policies that already exist are kept."/>
+                <TextBlock Text="Default browser" Style="{StaticResource SectionTitle}"/>
+                <TextBlock Style="{StaticResource Body}"
+                           Text="Windows does not let programs set the default browser in a clean, supported way, and UDP does not work around that. At the end of this step UDP opens Settings > Default apps and shows you the two clicks needed."/>
+                <TextBlock Text="How to undo" Style="{StaticResource SectionTitle}"/>
+                <TextBlock Style="{StaticResource Body}"
+                           Text="Uninstall the browser from Settings > Apps. Remove the extension policies with 'Revert browser policies created by UDP' on the welcome page, or run: UDP.ps1 -RevertBrowserPolicies. Only the entries UDP added are removed."/>
+            </StackPanel>
+        </Border>
+    </StackPanel>
+</ScrollViewer>
