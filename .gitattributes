@@ -1,0 +1,12 @@
+# Windows project: check out text files with CRLF (cmd.exe needs it for .bat files).
+* text=auto eol=crlf
+
+*.png binary
+*.jpg binary
+*.ico binary
+
+# Not needed to run UDP: left out of the release zip built by .github/workflows/release.yml.
+.github export-ignore
+tests export-ignore
+.gitattributes export-ignore
+.gitignore export-ignore

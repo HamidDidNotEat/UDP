@@ -1,0 +1,268 @@
+{
+  "schemaVersion": 1,
+  "project": {
+    "name": "UDP (Ultimate Debloat Pack)",
+    "version": "0.1.0",
+    "repository": "HamidDidNotEat/UDP",
+    "branch": "main",
+    "releaseAsset": "UDP.zip",
+    "releaseChecksums": "SHA256SUMS"
+  },
+  "tools": {
+    "win11debloat": {
+      "name": "Win11Debloat",
+      "author": "Raphire",
+      "description": "Removes preinstalled Store apps and applies privacy and usability tweaks to Windows.",
+      "homepage": "https://github.com/Raphire/Win11Debloat",
+      "license": "MIT",
+      "licenseUrl": "https://github.com/Raphire/Win11Debloat/blob/master/LICENSE",
+      "winget": null,
+      "githubRelease": {
+        "repo": "Raphire/Win11Debloat",
+        "asset": "Win11Debloat.zip",
+        "checksumsAsset": "SHA256SUMS"
+      },
+      "integrity": {
+        "method": "sha256sums",
+        "notes": "The script is not Authenticode-signed. The release zip is checked against the SHA256SUMS file published with the same release."
+      },
+      "entryScript": "Win11Debloat.ps1",
+      "baseArguments": [ "-Silent" ],
+      "neverPass": [ "ForceRemoveEdge", "CreateRestorePoint", "CLI", "Sysprep", "User", "Config", "RunSavedSettings" ],
+      "customOptions": [
+        { "switch": "RemoveApps", "group": "Apps", "label": "Remove the default selection of preinstalled apps", "default": true },
+        { "switch": "RemoveGamingApps", "group": "Apps", "label": "Remove the Xbox app and Xbox Game Bar", "default": false },
+        { "switch": "DisableTelemetry", "group": "Privacy", "label": "Disable telemetry, tracking and targeted ads", "default": true },
+        { "switch": "DisableSuggestions", "group": "Privacy", "label": "Disable tips, tricks and suggested content throughout Windows", "default": true },
+        { "switch": "DisableLockscreenTips", "group": "Privacy", "label": "Disable tips and tricks on the lock screen", "default": true },
+        { "switch": "DisableEdgeAds", "group": "Privacy", "label": "Disable ads, suggestions and the news feed in Edge", "default": true },
+        { "switch": "DisableSettings365Ads", "group": "Privacy", "label": "Hide Microsoft 365 Copilot ads in Settings Home", "default": false, "minBuild": 22000 },
+        { "switch": "DisableLocationServices", "group": "Privacy", "label": "Disable location services and app location access", "default": false },
+        { "switch": "DisableFindMyDevice", "group": "Privacy", "label": "Disable Find My Device location tracking", "default": false },
+        { "switch": "DisableBing", "group": "Search and Start", "label": "Disable Bing web search and Copilot in Windows search", "default": true },
+        { "switch": "DisableStoreSearchSuggestions", "group": "Search and Start", "label": "Disable Microsoft Store app suggestions in search", "default": true, "minBuild": 22621 },
+        { "switch": "DisableStartRecommended", "group": "Search and Start", "label": "Hide the Recommended section in the Start menu", "default": false, "minBuild": 22621 },
+        { "switch": "DisableStartPhoneLink", "group": "Search and Start", "label": "Disable Phone Link integration in the Start menu", "default": false, "minBuild": 22621 },
+        { "switch": "DisableCopilot", "group": "AI", "label": "Disable Microsoft Copilot", "default": true, "minBuild": 22621 },
+        { "switch": "DisableRecall", "group": "AI", "label": "Disable Windows Recall", "default": true, "minBuild": 22621 },
+        { "switch": "DisableClickToDo", "group": "AI", "label": "Disable Click to Do (AI text and image analysis)", "default": true, "minBuild": 22621 },
+        { "switch": "DisableAISvcAutoStart", "group": "AI", "label": "Prevent the AI service from starting automatically", "default": true, "minBuild": 22621 },
+        { "switch": "DisablePaintAI", "group": "AI", "label": "Disable AI features in Paint", "default": false, "minBuild": 22621 },
+        { "switch": "DisableNotepadAI", "group": "AI", "label": "Disable AI features in Notepad", "default": false, "minBuild": 22621 },
+        { "switch": "DisableWidgets", "group": "Taskbar", "label": "Disable widgets on the taskbar and lock screen", "default": true },
+        { "switch": "HideChat", "group": "Taskbar", "label": "Hide the Chat (Meet Now) icon on the taskbar", "default": true, "maxBuild": 22621 },
+        { "switch": "TaskbarAlignLeft", "group": "Taskbar", "label": "Align the taskbar to the left", "default": false, "minBuild": 22000 },
+        { "switch": "HideTaskview", "group": "Taskbar", "label": "Hide the Task view button on the taskbar", "default": false, "minBuild": 22000 },
+        { "switch": "EnableEndTask", "group": "Taskbar", "label": "Show 'End Task' in the taskbar right-click menu", "default": false, "minBuild": 22631 },
+        { "switch": "ShowKnownFileExt", "group": "File Explorer", "label": "Show file extensions for known file types", "default": true },
+        { "switch": "Hide3dObjects", "group": "File Explorer", "label": "Hide the '3D Objects' folder under 'This PC'", "default": true, "maxBuild": 21999 },
+        { "switch": "ShowHiddenFolders", "group": "File Explorer", "label": "Show hidden files, folders and drives", "default": false },
+        { "switch": "ExplorerToThisPC", "group": "File Explorer", "label": "Open File Explorer on 'This PC'", "default": false },
+        { "switch": "HideGallery", "group": "File Explorer", "label": "Hide 'Gallery' from the navigation pane", "default": false, "minBuild": 22000 },
+        { "switch": "DisableModernStandbyNetworking", "group": "System", "label": "Disable network connectivity during Modern Standby", "default": true, "minBuild": 22000 },
+        { "switch": "RevertContextMenu", "group": "System", "label": "Use the classic Windows 10 right-click menu", "default": false, "minBuild": 22000 },
+        { "switch": "DisableFastStartup", "group": "System", "label": "Disable Fast Startup", "default": false },
+        { "switch": "DisableMouseAcceleration", "group": "System", "label": "Disable 'Enhance pointer precision' (mouse acceleration)", "default": false },
+        { "switch": "DisableBitlockerAutoEncryption", "group": "System", "label": "Disable BitLocker automatic device encryption", "default": false, "minBuild": 22000 },
+        { "switch": "DisableDVR", "group": "Gaming", "label": "Disable Xbox game and screen recording", "default": false },
+        { "switch": "DisableGameBarIntegration", "group": "Gaming", "label": "Disable Game Bar integration", "default": false },
+        { "switch": "PreventUpdateAutoReboot", "group": "Windows Update", "label": "Prevent automatic restarts after updates while signed in", "default": false },
+        { "switch": "DisableDeliveryOptimization", "group": "Windows Update", "label": "Disable sharing downloaded updates with other PCs", "default": false },
+        { "switch": "EnableDarkMode", "group": "Appearance", "label": "Enable dark mode for system and apps", "default": false }
+      ]
+    },
+    "shutup10": {
+      "name": "O&O ShutUp10++",
+      "author": "O&O Software GmbH",
+      "description": "Free privacy tool: shows Windows privacy and telemetry settings in one list and lets you switch them off.",
+      "homepage": "https://www.oo-software.com/en/shutup10",
+      "license": "Freeware (proprietary)",
+      "licenseUrl": "https://www.oo-software.com/shutup10/eula",
+      "winget": "OO-Software.ShutUp10",
+      "direct": {
+        "url": "https://dl5.oo-software.com/files/ooshutup10/OOSU10.exe",
+        "fileName": "OOSU10.exe"
+      },
+      "preferredSource": "direct",
+      "preferredSourceNotes": "Portable, run-once tool that is Authenticode-signed by the vendor, so the direct download leaves nothing installed. Set to \"winget\" to use winget first.",
+      "integrity": {
+        "method": "authenticode",
+        "expectedSigner": "O&O Software GmbH"
+      },
+      "exeName": "OOSU10.exe",
+      "userConfigFile": "ooshutup10.cfg",
+      "userConfigNotes": "UDP ships no .cfg. Export your own from ShutUp10++ (File > Export settings) and save it as config/ooshutup10.cfg to enable silent mode."
+    },
+    "bcu": {
+      "name": "Bulk Crap Uninstaller",
+      "author": "Marcin Szeniak (Klocman)",
+      "description": "Uninstalls classic desktop programs in bulk and finds the leftovers they leave behind.",
+      "homepage": "https://www.bcuninstaller.com/",
+      "license": "Apache-2.0",
+      "licenseUrl": "https://github.com/BCUninstaller/Bulk-Crap-Uninstaller/blob/master/LICENSE",
+      "winget": "Klocman.BulkCrapUninstaller",
+      "githubRelease": {
+        "repo": "BCUninstaller/Bulk-Crap-Uninstaller",
+        "assetPattern": "BCUninstaller_*_portable.7z"
+      },
+      "integrity": {
+        "method": "github-digest",
+        "notes": "Exception: BCU binaries are not Authenticode-signed (checked on v6.3). The portable archive is checked against the SHA256 digest GitHub publishes for the release asset; the installed version relies on winget's manifest hash."
+      },
+      "exeName": "BCUninstaller.exe",
+      "processName": "BCUninstaller",
+      "uninstallDisplayName": "BCUninstaller*"
+    },
+    "browser": {
+      "name": "Alternative browser",
+      "description": "Installs Firefox, Chrome or Brave and can add privacy extensions through browser policies.",
+      "defaultAppsUri": "ms-settings:defaultapps",
+      "browsers": {
+        "firefox": {
+          "name": "Mozilla Firefox",
+          "homepage": "https://www.mozilla.org/firefox/",
+          "license": "MPL-2.0",
+          "winget": "Mozilla.Firefox",
+          "direct": {
+            "url": "https://download.mozilla.org/?product=firefox-latest-ssl&os=win64&lang=en-US",
+            "fileName": "FirefoxSetup.exe",
+            "silentArguments": [ "/S" ]
+          },
+          "integrity": { "method": "authenticode", "expectedSigner": "Mozilla Corporation" },
+          "startMenuInternet": "Firefox*",
+          "exePaths": [ "%ProgramFiles%\\Mozilla Firefox\\firefox.exe", "%ProgramFiles(x86)%\\Mozilla Firefox\\firefox.exe" ],
+          "policy": {
+            "flavor": "firefox",
+            "key": "HKLM:\\SOFTWARE\\Policies\\Mozilla\\Firefox",
+            "valueName": "ExtensionSettings",
+            "valueType": "MultiString",
+            "installationMode": "normal_installed",
+            "docs": "https://firefox-admin-docs.mozilla.org/reference/policies/extensionsettings/"
+          },
+          "extensions": [
+            { "name": "uBlock Origin", "id": "uBlock0@raymondhill.net", "installUrl": "https://addons.mozilla.org/firefox/downloads/latest/ublock-origin/latest.xpi", "homepage": "https://addons.mozilla.org/firefox/addon/ublock-origin/", "default": true },
+            { "name": "Privacy Badger", "id": "jid1-MnnxcxisBPnSXQ@jetpack", "installUrl": "https://addons.mozilla.org/firefox/downloads/latest/privacy-badger17/latest.xpi", "homepage": "https://privacybadger.org/", "default": true }
+          ]
+        },
+        "chrome": {
+          "name": "Google Chrome",
+          "homepage": "https://www.google.com/chrome/",
+          "license": "Proprietary (Google Chrome Terms of Service)",
+          "winget": "Google.Chrome",
+          "direct": {
+            "url": "https://dl.google.com/dl/chrome/install/googlechromestandaloneenterprise64.msi",
+            "fileName": "GoogleChromeEnterprise64.msi",
+            "silentArguments": [ "/qn", "/norestart" ]
+          },
+          "integrity": { "method": "authenticode", "expectedSigner": "Google LLC" },
+          "startMenuInternet": "Google Chrome*",
+          "exePaths": [ "%ProgramFiles%\\Google\\Chrome\\Application\\chrome.exe", "%ProgramFiles(x86)%\\Google\\Chrome\\Application\\chrome.exe" ],
+          "policy": {
+            "flavor": "chromium",
+            "key": "HKLM:\\SOFTWARE\\Policies\\Google\\Chrome",
+            "valueName": "ExtensionSettings",
+            "valueType": "String",
+            "installationMode": "normal_installed",
+            "updateUrl": "https://clients2.google.com/service/update2/crx",
+            "docs": "https://support.google.com/chrome/a/answer/9867568"
+          },
+          "extensions": [
+            { "name": "uBlock Origin Lite", "id": "ddkjiahejlhfcafbddmgiahcphecmpfh", "homepage": "https://github.com/uBlockOrigin/uBOL-home", "default": true },
+            { "name": "Privacy Badger", "id": "pkehgijcmpdhfbdbbnkijodmdjhbjlgp", "homepage": "https://privacybadger.org/", "default": true }
+          ]
+        },
+        "brave": {
+          "name": "Brave",
+          "homepage": "https://brave.com/",
+          "license": "MPL-2.0",
+          "winget": "Brave.Brave",
+          "direct": {
+            "url": "https://github.com/brave/brave-browser/releases/latest/download/BraveBrowserStandaloneSilentSetup.exe",
+            "fileName": "BraveBrowserStandaloneSilentSetup.exe",
+            "silentArguments": [ ]
+          },
+          "integrity": { "method": "authenticode", "expectedSigner": "Brave Software, Inc." },
+          "startMenuInternet": "Brave*",
+          "exePaths": [ "%ProgramFiles%\\BraveSoftware\\Brave-Browser\\Application\\brave.exe", "%ProgramFiles(x86)%\\BraveSoftware\\Brave-Browser\\Application\\brave.exe", "%LOCALAPPDATA%\\BraveSoftware\\Brave-Browser\\Application\\brave.exe" ],
+          "policy": {
+            "flavor": "chromium",
+            "key": "HKLM:\\SOFTWARE\\Policies\\BraveSoftware\\Brave",
+            "valueName": "ExtensionSettings",
+            "valueType": "String",
+            "installationMode": "normal_installed",
+            "updateUrl": "https://clients2.google.com/service/update2/crx",
+            "docs": "https://support.brave.app/hc/en-us/articles/360039248271-Group-Policy"
+          },
+          "extensions": [
+            { "name": "uBlock Origin Lite", "id": "ddkjiahejlhfcafbddmgiahcphecmpfh", "homepage": "https://github.com/uBlockOrigin/uBOL-home", "default": false },
+            { "name": "Privacy Badger", "id": "pkehgijcmpdhfbdbbnkijodmdjhbjlgp", "homepage": "https://privacybadger.org/", "default": false }
+          ]
+        }
+      }
+    },
+    "edgeRemoval": {
+      "name": "Edge_Removal.bat",
+      "author": "AveYo",
+      "description": "Removes Microsoft Edge on any region, including outside the EEA. UDP always keeps WebView2.",
+      "homepage": "https://github.com/AveYo/fox",
+      "license": "No license file in the repository. UDP does not redistribute it; it is downloaded from the official repository at run time.",
+      "licenseUrl": null,
+      "url": "https://raw.githubusercontent.com/AveYo/fox/2be2a9052b02a6d99e84871d05f2d301762176ff/Edge_Removal.bat",
+      "commit": "2be2a9052b02a6d99e84871d05f2d301762176ff",
+      "commitDate": "2023-09-14",
+      "sha256": "d4be8ed46ba80331a835aeef27064c79c0940206edba16da1da835351a06b107",
+      "integrity": {
+        "method": "sha256-pinned",
+        "notes": "Batch/PowerShell hybrid script, not signed. Pinned to a commit and checked against this SHA256. To update: change url, commit and sha256 together."
+      },
+      "payloadStartLine": "sp 'HKCU:\\Volatile Environment' 'Edge_Removal' @'",
+      "payloadEndPrefix": "'@.replace(",
+      "optionLines": {
+        "webview": "$also_remove_webview = 1",
+        "widgets": "$also_remove_widgets = 1",
+        "xsocial": "$also_remove_xsocial = 1"
+      }
+    },
+    "nvcleanstall": {
+      "name": "NVCleanstall",
+      "author": "TechPowerUp",
+      "description": "Builds a custom NVIDIA driver installer with only the components you choose.",
+      "homepage": "https://www.techpowerup.com/nvcleanstall/",
+      "downloadPage": "https://www.techpowerup.com/download/techpowerup-nvcleanstall/",
+      "license": "Freeware (proprietary)",
+      "licenseUrl": null,
+      "winget": "TechPowerUp.NVCleanstall",
+      "integrity": {
+        "method": "winget",
+        "expectedSigner": "TechPowerUp LLC",
+        "notes": "Installed through winget (manifest hash). If winget fails, UDP opens the official download page, lets you pick the installer you downloaded and checks that it is signed by TechPowerUp LLC."
+      },
+      "exeName": "NVCleanstall.exe",
+      "processName": "NVCleanstall",
+      "uninstallDisplayName": "NVCleanstall*"
+    },
+    "autoruns": {
+      "name": "Autoruns",
+      "author": "Microsoft Sysinternals (Mark Russinovich)",
+      "description": "Shows every program, service, driver and task that starts with Windows, so you can review and disable them.",
+      "homepage": "https://learn.microsoft.com/sysinternals/downloads/autoruns",
+      "license": "Sysinternals Software License Terms",
+      "licenseUrl": "https://learn.microsoft.com/sysinternals/license-terms",
+      "winget": "Microsoft.Sysinternals.Autoruns",
+      "direct": {
+        "url": "https://download.sysinternals.com/files/Autoruns.zip",
+        "fileName": "Autoruns.zip",
+        "archive": "zip"
+      },
+      "preferredSource": "direct",
+      "preferredSourceNotes": "Portable, run-once tool that is Authenticode-signed by Microsoft, so the direct download leaves nothing installed. Set to \"winget\" to use winget first.",
+      "integrity": {
+        "method": "authenticode",
+        "expectedSigner": "Microsoft Corporation"
+      },
+      "exeName": "Autoruns64.exe",
+      "exeNameArm64": "Autoruns64a.exe",
+      "exeName32": "Autoruns.exe"
+    }
+  }
+}
