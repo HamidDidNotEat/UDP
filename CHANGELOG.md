@@ -4,6 +4,12 @@ All notable changes to Ultimate Debloat Pack are listed here. The format follows
 
 ## [Unreleased]
 
+## [0.1.10] - 2026-11-05
+
+### Changed
+
+- The disclaimer (README and welcome page) no longer asks you to test UDP in a virtual machine first. It still says that UDP changes system settings, that it creates a restore point first, and that some changes cannot be undone by UDP itself. The "I agree" checkbox no longer mentions a VM snapshot.
+
 ## [0.1.9] - 2026-11-05
 
 ### Added
@@ -104,7 +110,8 @@ Found during the first virtual machine test, planned for the next releases:
 - Edge removal can report "Failed" although Edge was removed: the result is checked before Edge's own uninstaller has finished.
 - Edge shortcuts (desktop, Start menu) stay behind after Edge removal and open an empty window.
 
-[Unreleased]: https://github.com/HamidDidNotEat/Ultimate-Debloat-Pack/compare/v0.1.9...HEAD
+[Unreleased]: https://github.com/HamidDidNotEat/Ultimate-Debloat-Pack/compare/v0.1.10...HEAD
+[0.1.10]: https://github.com/HamidDidNotEat/Ultimate-Debloat-Pack/compare/v0.1.9...v0.1.10
 [0.1.9]: https://github.com/HamidDidNotEat/Ultimate-Debloat-Pack/compare/v0.1.8...v0.1.9
 [0.1.8]: https://github.com/HamidDidNotEat/Ultimate-Debloat-Pack/compare/v0.1.7...v0.1.8
 [0.1.7]: https://github.com/HamidDidNotEat/Ultimate-Debloat-Pack/compare/v0.1.6...v0.1.7

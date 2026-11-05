@@ -27,7 +27,7 @@
             <StackPanel>
                 <TextBlock Text="Disclaimer" Style="{StaticResource SectionTitle}" Margin="0,0,0,2"/>
                 <TextBlock Style="{StaticResource Body}" Margin="0"
-                           Text="UDP changes system settings, removes apps and can remove Microsoft Edge. Some of these changes cannot be undone by UDP itself. Test it first in a virtual machine with a snapshot. Use it at your own risk: UDP and the authors of the tools it runs give no warranty."/>
+                           Text="UDP changes system settings, removes apps and can remove Microsoft Edge. It creates a restore point first, but some of these changes cannot be undone by UDP itself. Use it at your own risk: UDP and the authors of the tools it runs give no warranty."/>
             </StackPanel>
         </Border>
 
@@ -62,7 +62,7 @@
                    Text="UDP keeps a small file, C:\ProgramData\UDP\state.json. Please do not delete it: UDP needs it to undo the browser policies it set and to show your before/after report."/>
 
         <CheckBox x:Name="AgreeCheck" Margin="0,8,0,0" FontWeight="SemiBold">
-            <TextBlock TextWrapping="Wrap" Text="I have read the disclaimer, I have a backup or a VM snapshot, and I use UDP at my own risk."/>
+            <TextBlock TextWrapping="Wrap" Text="I have read the disclaimer and I use UDP at my own risk."/>
         </CheckBox>
     </StackPanel>
 </ScrollViewer>

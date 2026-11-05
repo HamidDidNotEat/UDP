@@ -28,7 +28,7 @@
 Ultimate Debloat Pack (UDP) runs a set of well-known debloat and privacy tools for you, one after another, from their official sources. A wizard explains each tool in plain language, you tick what you want, and UDP does the rest, so the whole process feels like a single app.
 
 > [!WARNING]
-> UDP changes system settings, removes apps and can remove Microsoft Edge. Some of these changes cannot be undone by UDP itself. **Test it in a virtual machine with a snapshot before running it on your main PC.** UDP and the authors of the tools it runs give no warranty.
+> UDP changes system settings, removes apps and can remove Microsoft Edge. It creates a restore point first, but some of these changes cannot be undone by UDP itself. **Use it at your own risk:** UDP and the authors of the tools it runs give no warranty.
 
 | Welcome | A tool page | During the run |
 |:---:|:---:|:---:|
