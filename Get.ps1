@@ -1,5 +1,9 @@
 # Ultimate Debloat Pack (UDP) bootstrap for the one-line start:
 #
+#   irm https://hamiddidnoteat.github.io/udp | iex
+#
+# (the short address on the website loads this file), or directly:
+#
 #   irm https://raw.githubusercontent.com/HamidDidNotEat/Ultimate-Debloat-Pack/main/Get.ps1 | iex
 #
 # It downloads the latest UDP release (UDP.zip), checks it against the SHA256SUMS file published

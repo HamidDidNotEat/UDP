@@ -4,6 +4,16 @@ All notable changes to Ultimate Debloat Pack are listed here. The format follows
 
 ## [Unreleased]
 
+## [0.1.9] - 2026-11-05
+
+### Added
+
+- **A short start command and a website.** Start UDP with `irm https://hamiddidnoteat.github.io/udp | iex`, or visit https://hamiddidnoteat.github.io for the command (with a copy button), screenshots and links. The short command loads the same `Get.ps1` from this repository, so the download is still checked against the release's `SHA256SUMS`.
+
+### Changed
+
+- The README, the release notes and `Get.ps1` show the short command. The long GitHub command still works.
+
 ## [0.1.8] - 2026-11-05
 
 ### Added
@@ -94,7 +104,8 @@ Found during the first virtual machine test, planned for the next releases:
 - Edge removal can report "Failed" although Edge was removed: the result is checked before Edge's own uninstaller has finished.
 - Edge shortcuts (desktop, Start menu) stay behind after Edge removal and open an empty window.
 
-[Unreleased]: https://github.com/HamidDidNotEat/Ultimate-Debloat-Pack/compare/v0.1.8...HEAD
+[Unreleased]: https://github.com/HamidDidNotEat/Ultimate-Debloat-Pack/compare/v0.1.9...HEAD
+[0.1.9]: https://github.com/HamidDidNotEat/Ultimate-Debloat-Pack/compare/v0.1.8...v0.1.9
 [0.1.8]: https://github.com/HamidDidNotEat/Ultimate-Debloat-Pack/compare/v0.1.7...v0.1.8
 [0.1.7]: https://github.com/HamidDidNotEat/Ultimate-Debloat-Pack/compare/v0.1.6...v0.1.7
 [0.1.6]: https://github.com/HamidDidNotEat/Ultimate-Debloat-Pack/compare/v0.1.5...v0.1.6

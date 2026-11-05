@@ -12,6 +12,7 @@
 ![Windows 10 | 11](https://img.shields.io/badge/Windows-10%20%7C%2011-0078D4?logo=windows&logoColor=white)
 ![PowerShell 5.1](https://img.shields.io/badge/PowerShell-5.1-5391FE?logo=powershell&logoColor=white)
 
+[Website](https://hamiddidnoteat.github.io) &middot;
 [Quick start](#quick-start) &middot;
 [Features](#features) &middot;
 [What's included](#whats-included) &middot;
@@ -38,13 +39,24 @@ Ultimate Debloat Pack (UDP) runs a set of well-known debloat and privacy tools f
 Open **PowerShell** as a normal user and run:
 
 ```powershell
-irm https://raw.githubusercontent.com/HamidDidNotEat/Ultimate-Debloat-Pack/main/Get.ps1 | iex
+irm https://hamiddidnoteat.github.io/udp | iex
 ```
 
-UDP asks for administrator rights itself. [`Get.ps1`](Get.ps1) downloads the [latest release](https://github.com/HamidDidNotEat/Ultimate-Debloat-Pack/releases/latest), checks it against the `SHA256SUMS` file published with it, starts UDP, and deletes the extracted files when UDP closes.
+UDP asks for administrator rights itself. The short command loads [`Get.ps1`](Get.ps1) from this repository, which:
+- downloads the [latest release](https://github.com/HamidDidNotEat/Ultimate-Debloat-Pack/releases/latest)
+- checks it against the `SHA256SUMS` file published with it
+- starts UDP, and deletes the extracted files when UDP closes
+
+Website: **https://hamiddidnoteat.github.io**
 
 <details>
 <summary>Other ways to start UDP</summary>
+
+**Straight from GitHub,** without the website (same `Get.ps1`):
+
+```powershell
+irm https://raw.githubusercontent.com/HamidDidNotEat/Ultimate-Debloat-Pack/main/Get.ps1 | iex
+```
 
 **Download and double-click:** download `UDP.zip` from the [latest release](https://github.com/HamidDidNotEat/Ultimate-Debloat-Pack/releases/latest), extract it, and double-click `Run-UDP.bat`.
 

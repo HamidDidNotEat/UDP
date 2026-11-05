@@ -50,7 +50,7 @@ jobs:
             echo "### Install"
             echo
             echo '```powershell'
-            echo "irm https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/main/Get.ps1 | iex"
+            jq -r '.project.startCommand' config/tools.json
             echo '```'
             echo
             echo "Or download \`UDP.zip\`, extract it and run \`Run-UDP.bat\`. SHA256 of UDP.zip: \`$(cut -d ' ' -f 1 SHA256SUMS)\`"
