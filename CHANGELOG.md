@@ -4,6 +4,13 @@ All notable changes to Ultimate Debloat Pack are listed here. The format follows
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-11-05
+
+### Fixed
+
+- **Edge removal no longer reports "Failed" when Edge was removed.** Edge's own uninstaller keeps running in the background after AveYo's script ends, and UDP checked too early. UDP now waits up to 5 minutes for it to finish, then checks both Edge's entry in *Settings > Apps* and `msedge.exe`. When something is really left, the log says exactly what.
+- Terminal colour codes printed by some tools no longer appear as garbage characters in the log.
+
 ## [0.1.0] - 2026-11-05
 
 First public release.
@@ -29,5 +36,6 @@ Found during the first virtual machine test, planned for the next releases:
 - Edge removal can report "Failed" although Edge was removed: the result is checked before Edge's own uninstaller has finished.
 - Edge shortcuts (desktop, Start menu) stay behind after Edge removal and open an empty window.
 
-[Unreleased]: https://github.com/HamidDidNotEat/Ultimate-Debloat-Pack/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/HamidDidNotEat/Ultimate-Debloat-Pack/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/HamidDidNotEat/Ultimate-Debloat-Pack/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/HamidDidNotEat/Ultimate-Debloat-Pack/releases/tag/v0.1.0

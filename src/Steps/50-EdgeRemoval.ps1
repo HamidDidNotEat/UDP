@@ -27,7 +27,7 @@ function Get-UdpEdgeRemovalPlan {
     return @(
         "Download Edge_Removal.bat (AveYo/fox, commit $($tool.commit.Substring(0, 7))) and check its SHA256",
         "Remove Microsoft Edge and keep WebView2. Also remove: $also",
-        'Run it with no window and wait for it to finish'
+        'Run it with no window, wait for Edge''s own uninstaller to finish, then check that Edge is gone and WebView2 is still there'
     )
 }
 
@@ -114,8 +114,9 @@ function Invoke-UdpEdgeRemoval {
     # The script restarts Explorer; make sure it is running again.
     if (-not (Get-Process -Name explorer -ErrorAction SilentlyContinue)) { Start-Process explorer.exe }
 
-    $edgeGone = -not (Test-UdpEdgeInstalled)
+    $edgeGone = Wait-UdpEdgeRemoved -TimeoutSeconds 300
     $webView = Test-UdpWebView2Installed
+    Write-UdpLog "WebView2 Runtime after removal: $(if ($webView) { 'present' } else { 'NOT FOUND' })" -Level Info
     if ($edgeGone -and $webView) {
         return New-UdpStepResult -Status Success -Message 'Edge removed, WebView2 kept. Edge may come back after a major Windows update; run UDP again if it does.'
     }
@@ -125,5 +126,37 @@ function Invoke-UdpEdgeRemoval {
     if ($edgeGone) {
         return New-UdpStepResult -Status Failed -Message 'Edge was removed but WebView2 is missing afterwards. Reinstall it from https://developer.microsoft.com/microsoft-edge/webview2/'
     }
-    return New-UdpStepResult -Status Failed -Message "Edge is still installed (script exit code $exitCode). See the log for details."
+    return New-UdpStepResult -Status Failed -Message "Edge is still installed after waiting 5 minutes ($(Get-UdpEdgeLeftoverText)). Script exit code: $exitCode. See the log for details."
+}
+
+function Get-UdpEdgeLeftoverText {
+    $left = @()
+    if (Test-UdpEdgeUninstallEntry) { $left += 'its entry in Settings > Apps is still there' }
+    foreach ($path in @(Get-UdpEdgeExePaths)) { $left += "$path still exists" }
+    if ($left.Count -eq 0) { return 'nothing left' }
+    return ($left -join '; ')
+}
+
+# Edge's uninstaller keeps running in the background after AveYo's script ends (it hands over to a
+# copy of itself), so checking right away reports Edge as still installed. Wait until both its
+# Settings > Apps entry and msedge.exe are gone, or until the timeout.
+function Wait-UdpEdgeRemoved {
+    param([int]$TimeoutSeconds = 300)
+    $deadline = (Get-Date).AddSeconds($TimeoutSeconds)
+    $announced = $false
+    while ($true) {
+        if (-not (Test-UdpEdgeInstalled)) {
+            Write-UdpLog 'Edge is gone: no entry in Settings > Apps and no msedge.exe.' -Level Info
+            return $true
+        }
+        if ((Get-Date) -ge $deadline) {
+            Write-UdpLog "Edge is still present after waiting: $(Get-UdpEdgeLeftoverText)" -Level Warning
+            return $false
+        }
+        if (-not $announced) {
+            Write-UdpLog "Waiting for Edge's own uninstaller to finish (up to $([int]($TimeoutSeconds / 60)) minutes): $(Get-UdpEdgeLeftoverText)" -Level Info
+            $announced = $true
+        }
+        Start-Sleep -Seconds 3
+    }
 }

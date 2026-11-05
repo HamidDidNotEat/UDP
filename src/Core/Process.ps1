@@ -21,6 +21,12 @@ function Join-UdpArguments {
 # Block characters U+2580..U+259F, which winget uses to draw progress bars.
 $script:UdpBlockCharPattern = '[' + [char]0x2580 + '-' + [char]0x259F + ']'
 
+# Removes terminal colour and cursor codes (ESC [ ...) that some scripts print, so the log stays readable.
+function ConvertTo-UdpPlainText {
+    param([AllowEmptyString()][string]$Text)
+    return ($Text -replace '\x1b\[[0-9;?]*[ -/]*[@-~]', '')
+}
+
 # Reads what was appended to a redirected output file since the last call and logs complete lines.
 function Read-UdpProcessOutput {
     param(
@@ -60,7 +66,7 @@ function Read-UdpProcessOutput {
     }
 
     foreach ($part in $parts) {
-        $clean = $part.Trim()
+        $clean = (ConvertTo-UdpPlainText $part).Trim()
         if ($clean -eq '') { continue }
         # Skip spinner and progress-bar lines (winget draws them with block characters).
         if ($clean -match '^[\-\\|/\s]+$') { continue }

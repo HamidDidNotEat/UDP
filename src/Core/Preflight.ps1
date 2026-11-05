@@ -55,13 +55,34 @@ function Get-UdpInstalledBrowsers {
     return $names
 }
 
-function Test-UdpEdgeInstalled {
+# Paths of msedge.exe that still exist.
+function Get-UdpEdgeExePaths {
+    $paths = @()
     foreach ($base in @(${env:ProgramFiles(x86)}, $env:ProgramFiles)) {
-        if ($base -and (Test-Path -LiteralPath (Join-Path $base 'Microsoft\Edge\Application\msedge.exe'))) {
-            return $true
-        }
+        if (-not $base) { continue }
+        $path = Join-Path $base 'Microsoft\Edge\Application\msedge.exe'
+        if ((Test-Path -LiteralPath $path) -and $paths -notcontains $path) { $paths += $path }
+    }
+    return $paths
+}
+
+# Edge's own entry in Settings > Apps (not "Microsoft Edge WebView2 Runtime" or "Microsoft Edge Update").
+function Test-UdpEdgeUninstallEntry {
+    $keys = @(
+        'HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*',
+        'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*',
+        'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*'
+    )
+    foreach ($key in $keys) {
+        $entry = Get-ItemProperty -Path $key -ErrorAction SilentlyContinue | Where-Object { $_.DisplayName -eq 'Microsoft Edge' }
+        if ($entry) { return $true }
     }
     return $false
+}
+
+# Edge counts as installed while its uninstall entry or msedge.exe is still there.
+function Test-UdpEdgeInstalled {
+    return ((Test-UdpEdgeUninstallEntry) -or (@(Get-UdpEdgeExePaths).Count -gt 0))
 }
 
 function Test-UdpWebView2Installed {

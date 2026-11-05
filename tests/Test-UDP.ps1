@@ -99,6 +99,9 @@ Assert-Udp ((Get-UdpHashFromSums -SumsText $sums -FileName 'Win11Debloat.zip') -
 Assert-Udp ($null -eq (Get-UdpHashFromSums -SumsText $sums -FileName 'missing.zip')) 'Get-UdpHashFromSums returns null for a missing file'
 Assert-Udp ((Format-UdpArgument 'C:\Program Files\x.cfg') -eq '"C:\Program Files\x.cfg"') 'Format-UdpArgument quotes paths with spaces'
 Assert-Udp ((Format-UdpArgument '/quiet') -eq '/quiet') 'Format-UdpArgument leaves simple arguments alone'
+$esc = [char]27
+Assert-Udp ((ConvertTo-UdpPlainText "$esc[40;32m EDGE REMOVED! $esc[97m-done") -eq ' EDGE REMOVED! -done') 'Terminal colour codes are removed from tool output'
+Assert-Udp ((@(Get-UdpEdgeExePaths) | Where-Object { $_ -is [array] }).Count -eq 0) 'Get-UdpEdgeExePaths returns a flat list'
 Assert-Udp ((Get-UdpSubjectOrganization 'CN="Brave Software, Inc.", O="Brave Software, Inc.", L=San Francisco') -eq 'Brave Software, Inc.') 'Quoted O= is parsed'
 Assert-Udp ((Get-UdpSubjectOrganization 'CN=Google LLC, O=Google LLC, L=Mountain View') -eq 'Google LLC') 'Plain O= is parsed'
 $browsers = @(Get-UdpInstalledBrowsers)

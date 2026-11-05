@@ -36,6 +36,8 @@ So UDP:
 4. Writes the result to `%TEMP%\UDP\work\edge\Edge_Removal.ps1` and logs the three option lines it used.
 5. Runs it with `powershell.exe -NoProfile -ExecutionPolicy Bypass -File ...` with no window, streams its output into the log, and waits for it to finish.
 6. Makes sure Explorer is running again (the script restarts it).
+7. Waits for Edge's own uninstaller to finish. It keeps running in the background after the script ends, so UDP waits up to 5 minutes until both Edge's entry in *Settings > Apps* and `msedge.exe` are gone.
+8. Checks the result: the step succeeds when Edge is gone and WebView2 is still present. Otherwise the step fails and the log says exactly what is left.
 
 ## Never without a browser
 
