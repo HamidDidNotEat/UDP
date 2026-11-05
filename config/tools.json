@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "project": {
     "name": "UDP (Ultimate Debloat Pack)",
-    "version": "0.1.2",
+    "version": "0.1.3",
     "repository": "HamidDidNotEat/Ultimate-Debloat-Pack",
     "branch": "main",
     "releaseAsset": "UDP.zip",

@@ -27,17 +27,22 @@ function Get-UdpAutorunsPlan {
 
 function Get-UdpAutorunsBriefing {
     return @'
-Autoruns lists everything that starts with Windows: programs, services, drivers, scheduled tasks and more. It is a review tool: you decide what to switch off.
+## What you will see
+Everything that starts with Windows: programs, services, drivers, scheduled tasks and more. The first time, Autoruns shows Microsoft's license terms: read them and click Agree.
 
-How to use it:
-  1. Open the "Options" menu and tick "Hide Microsoft Entries" and "Hide Windows Entries", then press F5 to refresh. What is left is third-party software.
-  2. Look at the "Logon", "Scheduled Tasks" and "Services" tabs first.
-  3. To stop something from starting, UNTICK its checkbox. Do not delete entries: an unticked entry can be ticked again later, a deleted one cannot.
-  4. Rows in yellow point to files that no longer exist, usually leftovers. Rows in pink have no verified publisher: look them up before changing them.
-  5. Leave drivers, security software and anything you do not recognise alone.
-  6. Close Autoruns when you are done. Changes take effect after the restart at the end.
+## Step by step
+1. Open the "Options" menu and tick "Hide Microsoft Entries" and "Hide Windows Entries", then press F5 to refresh. What is left is third-party software.
+2. Look at the "Logon" tab first (programs that start when you sign in), then "Scheduled Tasks" and "Services".
+3. To stop something from starting, untick its checkbox. To undo, tick it again.
+4. Never use right-click > Delete: an unticked entry can be turned back on, a deleted one cannot.
 
-The first time, Autoruns shows Microsoft's license terms: read them and accept to continue.
+## Do I need to save?
+No. Unticking an entry is applied immediately and takes effect at the next restart. "File > Save" only exports a list for comparing later: you do not need it.
+
+## When you are done
+Close Autoruns with the X. UDP continues automatically.
+
+> Colours: yellow means the file no longer exists (usually a leftover); pink means there is no verified publisher, so look it up before changing it.
 '@
 }
 

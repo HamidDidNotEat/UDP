@@ -19,21 +19,21 @@ function Get-UdpNVCleanstallPlan {
 
 function Get-UdpNVCleanstallBriefing {
     return @'
-NVCleanstall downloads the official NVIDIA driver and builds an installer with only the parts you pick.
+## What you will see
+A wizard that downloads the official NVIDIA driver and builds a lighter installer with only the parts you choose. The exact labels can differ slightly between versions.
 
-Suggested components:
-  - Display driver (always required)
-  - PhysX (used by some games)
-  - HD Audio driver: only if your sound goes through HDMI or DisplayPort (TV or monitor speakers)
+## Step by step
+1. On the first page, choose to install the best driver for your hardware, then click Next.
+2. Components: keep "Display Driver" (always needed). Add PhysX, and HD Audio only if your sound goes through HDMI or DisplayPort (TV or monitor speakers). Click Next.
+3. Tweaks: tick "Disable Installer Telemetry & Advertising" and "Perform a Clean Installation". Click Next.
+4. NVCleanstall downloads the driver and builds the installer, which takes a few minutes. Then click Install and follow the NVIDIA installer.
+5. The screen may go black for a moment during the installation. That is normal.
+6. When the installation has finished, close NVCleanstall with the X.
 
-Suggested tweaks on the next page:
-  - Disable Installer Telemetry & Advertising
-  - Perform a clean installation
+## Trade-off
+Without the NVIDIA App you lose DLSS Override, ShadowPlay (Instant Replay and recording) and Smooth Motion. Alternatives: NVIDIA Profile Inspector for per-game driver settings, OBS Studio for recording.
 
-Trade-off: without the NVIDIA App you lose DLSS Override, ShadowPlay (Instant Replay) and Smooth Motion.
-Alternatives: NVIDIA Profile Inspector for per-game driver settings, OBS Studio for recording.
-
-The driver installation may make the screen go black for a moment. Close NVCleanstall when it is finished; UDP continues automatically.
+> UDP continues automatically when you close NVCleanstall. It stays installed so you can use it for the next driver update.
 '@
 }
 

@@ -495,8 +495,61 @@ function Complete-UdpRequest {
     param([string]$Answer)
     $sync = $script:Wizard.Context.Sync
     $script:Wizard.Controls.Overlay.Visibility = 'Collapsed'
+    if ($script:Wizard.LogWasExpanded) { $script:Wizard.Controls.LogExpander.IsExpanded = $true }
     $sync.Response = $Answer
     [void]$sync.ResponseEvent.Set()
+}
+
+# One line of a list: a marker column (bullet or step number) and wrapped text with a hanging indent.
+function New-UdpListItem {
+    param([string]$Marker, [string]$Text)
+    $grid = New-Object System.Windows.Controls.Grid
+    $grid.Margin = New-Object System.Windows.Thickness(4, 0, 0, 4)
+    $markerColumn = New-Object System.Windows.Controls.ColumnDefinition
+    $markerColumn.Width = New-Object System.Windows.GridLength(22)
+    [void]$grid.ColumnDefinitions.Add($markerColumn)
+    [void]$grid.ColumnDefinitions.Add((New-Object System.Windows.Controls.ColumnDefinition))
+    $markerBlock = New-UdpTextBlock -Text $Marker -Style 'Body' -Margin (New-Object System.Windows.Thickness(0))
+    $markerBlock.Foreground = New-UdpBrush '#2563EB'
+    $markerBlock.FontWeight = 'SemiBold'
+    $textBlock = New-UdpTextBlock -Text $Text -Style 'Body' -Margin (New-Object System.Windows.Thickness(0))
+    [System.Windows.Controls.Grid]::SetColumn($textBlock, 1)
+    [void]$grid.Children.Add($markerBlock)
+    [void]$grid.Children.Add($textBlock)
+    return $grid
+}
+
+# Shows the guides written in the step files. They use a few simple markers:
+#   "## Title" heading, "- item" bullet, "1. step" numbered step, "> text" highlighted note.
+# Any other line is a paragraph; text without markers (questions, errors) shows as plain paragraphs.
+function Add-UdpFormattedText {
+    param($Panel, [string]$Text)
+    $Panel.Children.Clear()
+    foreach ($line in ($Text -split "`r?`n")) {
+        $trimmed = $line.Trim()
+        if ($trimmed -eq '') { continue }
+        if ($trimmed.StartsWith('## ')) {
+            $top = 10
+            if ($Panel.Children.Count -eq 0) { $top = 0 }
+            [void]$Panel.Children.Add((New-UdpTextBlock -Text $trimmed.Substring(3) -Style 'SectionTitle' -Margin (New-Object System.Windows.Thickness(0, $top, 0, 4))))
+        }
+        elseif ($trimmed.StartsWith('- ')) {
+            [void]$Panel.Children.Add((New-UdpListItem -Marker ([string][char]0x2022) -Text $trimmed.Substring(2)))
+        }
+        elseif ($trimmed -match '^(\d+)\.\s+(.+)$') {
+            [void]$Panel.Children.Add((New-UdpListItem -Marker "$($Matches[1])." -Text $Matches[2]))
+        }
+        elseif ($trimmed.StartsWith('> ')) {
+            $box = New-Object System.Windows.Controls.Border
+            $box.Style = [System.Windows.Application]::Current.FindResource('InfoBox')
+            $box.Margin = New-Object System.Windows.Thickness(0, 10, 0, 2)
+            $box.Child = New-UdpTextBlock -Text $trimmed.Substring(2) -Style 'Body' -Margin (New-Object System.Windows.Thickness(0))
+            [void]$Panel.Children.Add($box)
+        }
+        else {
+            [void]$Panel.Children.Add((New-UdpTextBlock -Text $trimmed -Style 'Body'))
+        }
+    }
 }
 
 function Show-UdpRequest {
@@ -516,8 +569,12 @@ function Show-UdpRequest {
         return
     }
 
+    # Fold the log away while a guide or question is shown, so it has room; it comes back afterwards.
+    $w.LogWasExpanded = [bool]$c.LogExpander.IsExpanded
+    $c.LogExpander.IsExpanded = $false
     $c.OverlayTitle.Text = $Request.Title
-    $c.OverlayBody.Text = $Request.Body
+    Add-UdpFormattedText -Panel $c.OverlayBody -Text $Request.Body
+    $c.OverlayScroll.ScrollToTop()
     $c.OverlayButtons.Children.Clear()
     $ordered = @($Request.Buttons | Where-Object { -not $_.Primary }) + @($Request.Buttons | Where-Object { $_.Primary })
     foreach ($definition in $ordered) {
@@ -628,7 +685,7 @@ function Initialize-UdpWizard {
     $window = Import-UdpXaml -Path (Join-Path $root 'ui\MainWindow.xaml')
 
     $controls = @{}
-    foreach ($name in 'NavList', 'VersionText', 'PageHost', 'Overlay', 'OverlayTitle', 'OverlayBody', 'OverlayButtons',
+    foreach ($name in 'NavList', 'VersionText', 'PageHost', 'Overlay', 'OverlayTitle', 'OverlayBody', 'OverlayScroll', 'OverlayButtons',
         'LogExpander', 'LogBox', 'FooterStatus', 'RunProgress', 'CancelButton', 'BackButton', 'NextButton') {
         $controls[$name] = $window.FindName($name)
     }

@@ -30,17 +30,19 @@ function Get-UdpShutUp10Plan {
 
 function Get-UdpShutUp10Briefing {
     return @'
-ShutUp10++ shows Windows privacy settings as a list of switches. Green means the protection is on.
+## What you will see
+A list of Windows privacy settings. Each row has a switch: green means the protection is on. The icon next to it shows how safe it is: a green tick is recommended, a yellow sign is a limited recommendation, a red sign is not recommended.
 
-Suggested way to use it:
-  1. Open the "Actions" menu and choose "Apply only recommended settings".
-     Recommended settings are safe for almost everyone.
-  2. Optionally go through the yellow "limited recommendation" items one by one.
-     Leave the red "not recommended" ones alone unless you know what they do.
-  3. If ShutUp10++ asks to create a restore point, you can say No: UDP already created one.
-  4. Close ShutUp10++. UDP continues automatically.
+## Step by step
+1. Click the "Actions" menu at the top, then "Apply only recommended settings".
+2. If ShutUp10++ asks to create a system restore point, click No: UDP already created one.
+3. Optional: read the yellow items one by one and switch on the ones you understand. Leave the red ones alone.
+4. Close ShutUp10++ with the X in the top-right corner.
 
-To undo later: open ShutUp10++ again and use "Actions > Undo all changes".
+## Do I need to save?
+No. Each switch is applied as soon as you click it. There is no Save button.
+
+> UDP continues automatically when you close ShutUp10++. To undo later: open it again and use "Actions > Undo all changes".
 '@
 }
 

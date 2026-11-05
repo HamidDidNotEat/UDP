@@ -35,6 +35,9 @@ This exception is recorded in the `integrity.notes` of the `bcu` entry in `confi
    - **Questionable** and **Bad:** leave them alone.
 3. Keep **Show system components** and **Show protected items** switched off in the filter options on the left. They are off by default and hide entries that should not be removed.
 4. You do not need BCU's startup manager: startup entries are reviewed later in Autoruns.
+5. Close BCU with the X. UDP continues automatically.
+
+**Do I need to save?** No. Each uninstall happens right away; leftovers are deleted when you click **Delete selected** in the leftover window.
 
 ## Do NOT uninstall here
 

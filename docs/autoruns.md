@@ -31,7 +31,9 @@ Autoruns runs after every uninstall (Win11Debloat, BCU, Edge), so it shows only 
    - **Yellow** rows point to files that no longer exist, usually leftovers.
    - **Pink** rows have no verified publisher: look them up before changing them.
 5. Leave drivers, security software and anything you do not recognise alone.
-6. Close Autoruns. Changes take effect after the restart at the end.
+6. Close Autoruns with the X. UDP continues automatically.
+
+**Do I need to save?** No. Unticking an entry is applied immediately and takes effect at the next restart. *File > Save* only exports a list of entries for comparing later; you do not need it.
 
 The first time it runs, Autoruns shows Microsoft's license terms. Read and accept them yourself; UDP does not accept them for you.
 

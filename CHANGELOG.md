@@ -4,6 +4,13 @@ All notable changes to Ultimate Debloat Pack are listed here. The format follows
 
 ## [Unreleased]
 
+## [0.1.3] - 2026-11-05
+
+### Changed
+
+- **Clearer guides before each tool opens.** The guides for ShutUp10++, Bulk Crap Uninstaller, NVCleanstall and Autoruns now have headings, numbered steps, a "Do I need to save?" answer and what to do when you are done. For example, Autoruns has no Save button: unticking an entry is enough.
+- The guides are shown formatted (headings, numbered steps, highlighted notes) in a wider panel, and the log folds away while a guide is open.
+
 ## [0.1.2] - 2026-11-05
 
 ### Added
@@ -43,7 +50,8 @@ Found during the first virtual machine test, planned for the next releases:
 - Edge removal can report "Failed" although Edge was removed: the result is checked before Edge's own uninstaller has finished.
 - Edge shortcuts (desktop, Start menu) stay behind after Edge removal and open an empty window.
 
-[Unreleased]: https://github.com/HamidDidNotEat/Ultimate-Debloat-Pack/compare/v0.1.2...HEAD
+[Unreleased]: https://github.com/HamidDidNotEat/Ultimate-Debloat-Pack/compare/v0.1.3...HEAD
+[0.1.3]: https://github.com/HamidDidNotEat/Ultimate-Debloat-Pack/compare/v0.1.2...v0.1.3
 [0.1.2]: https://github.com/HamidDidNotEat/Ultimate-Debloat-Pack/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/HamidDidNotEat/Ultimate-Debloat-Pack/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/HamidDidNotEat/Ultimate-Debloat-Pack/releases/tag/v0.1.0

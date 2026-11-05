@@ -21,6 +21,9 @@ ShutUp10++ shows Windows privacy, telemetry and app-permission settings as a lis
 1. *Actions > Apply only recommended settings*.
 2. Optionally review the yellow items one by one.
 3. If ShutUp10++ offers to create a restore point, you can decline: UDP already made one.
+4. Close ShutUp10++ with the X. UDP continues automatically.
+
+**Do I need to save?** No. Each switch is applied as soon as you click it; there is no Save button.
 
 **Silent (with your own settings).** UDP runs `OOSU10.exe <your file>.cfg /quiet`, the syntax that ShutUp10++ writes into the header of the files it exports.
 

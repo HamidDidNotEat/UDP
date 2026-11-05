@@ -28,23 +28,27 @@ function Get-UdpBcuPlan {
 
 function Get-UdpBcuBriefing {
     return @'
-Bulk Crap Uninstaller (BCU) lists the classic desktop programs on this PC (OEM tools, trial antivirus, old software). UDP removes nothing by itself: you choose.
+## What you will see
+A list of every desktop program on this PC. The first time, BCU asks a few setup questions: keep the suggested answers.
 
-How to use it:
-  1. Tick the programs you want to remove, then click "Uninstall".
-  2. When BCU offers to look for leftovers, let it scan. Only remove the leftovers rated "Very good". Check "Good" ones yourself before removing them. Leave "Questionable" and "Bad" ones alone.
-  3. Keep "Show system components" and "Show protected items" switched off in the filter options on the left. They are off by default and hide entries that should not be removed.
-  4. Close BCU when you are done. UDP continues automatically.
+## Step by step
+1. Tick the box next to each program you want to remove. You can tick several.
+2. Click "Uninstall" in the toolbar, check the list and confirm.
+3. Some programs open their own uninstaller: answer its questions (usually Yes, Remove or Next).
+4. When BCU offers to look for leftovers, accept. Remove only the items rated "Very good", check "Good" ones yourself, and leave "Questionable" and "Bad" ones alone. Then click "Delete selected".
+5. Close BCU with the X when you are done.
 
-Do NOT uninstall here:
-  - GPU, chipset, audio or network drivers
-  - Microsoft Visual C++ Redistributables, .NET and DirectX runtimes
-  - Microsoft Edge WebView2 Runtime (many apps need it)
-  - Microsoft Edge itself (UDP removes it in a later step and keeps WebView2)
-  - Game anti-cheat services (Easy Anti-Cheat, BattlEye, Riot Vanguard, ...), or games stop launching
+## Do NOT uninstall
+- GPU, chipset, audio or network drivers
+- Microsoft Visual C++ Redistributables, .NET and DirectX runtimes
+- Microsoft Edge WebView2 Runtime (many apps need it)
+- Microsoft Edge itself (UDP removes it in a later step and keeps WebView2)
+- Game anti-cheat services (Easy Anti-Cheat, BattlEye, Riot Vanguard, ...), or games stop launching
 
-Uninstalls cannot be undone by UDP. Your safety net is the restore point created at the start, or simply reinstalling the program.
-You do not need BCU's startup manager: startup entries are reviewed later in Autoruns.
+## Do I need to save?
+No. Each uninstall happens right away and cannot be undone by UDP. The restore point created at the start is your safety net.
+
+> Keep "Show system components" and "Show protected items" switched off in the filters on the left (they are off by default). You do not need BCU's startup manager: Autoruns comes later.
 '@
 }
 

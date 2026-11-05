@@ -36,7 +36,7 @@
             <ContentControl x:Name="PageHost" Margin="0"/>
 
             <Border x:Name="Overlay" Background="#CCF3F4F6" Visibility="Collapsed">
-                <Border Style="{StaticResource Card}" MaxWidth="700" Margin="30" Padding="22,18"
+                <Border Style="{StaticResource Card}" MaxWidth="760" Margin="30" Padding="22,18"
                         VerticalAlignment="Center" HorizontalAlignment="Center">
                     <Border.Effect>
                         <DropShadowEffect BlurRadius="18" ShadowDepth="2" Opacity="0.25"/>
@@ -45,8 +45,8 @@
                         <TextBlock x:Name="OverlayTitle" DockPanel.Dock="Top" Style="{StaticResource PageTitle}" FontSize="19"/>
                         <StackPanel x:Name="OverlayButtons" DockPanel.Dock="Bottom" Orientation="Horizontal"
                                     HorizontalAlignment="Right" Margin="0,16,0,0"/>
-                        <ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="420">
-                            <TextBlock x:Name="OverlayBody" Style="{StaticResource Body}"/>
+                        <ScrollViewer x:Name="OverlayScroll" VerticalScrollBarVisibility="Auto" MaxHeight="460">
+                            <StackPanel x:Name="OverlayBody" Margin="0,0,10,0"/>
                         </ScrollViewer>
                     </DockPanel>
                 </Border>
