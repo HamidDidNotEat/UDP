@@ -4,6 +4,12 @@ All notable changes to Ultimate Debloat Pack are listed here. The format follows
 
 ## [Unreleased]
 
+## [0.1.4] - 2026-11-05
+
+### Added
+
+- **Autoruns guide: what is usually safe to switch off** (chat apps and game launchers you open yourself, music apps, unused cloud sync, meeting apps, update checkers of rarely used apps, leftovers) **and what to leave on** (hardware makers' software, security software, anti-cheat, drivers, anything you do not recognise).
+
 ## [0.1.3] - 2026-11-05
 
 ### Changed
@@ -50,7 +56,8 @@ Found during the first virtual machine test, planned for the next releases:
 - Edge removal can report "Failed" although Edge was removed: the result is checked before Edge's own uninstaller has finished.
 - Edge shortcuts (desktop, Start menu) stay behind after Edge removal and open an empty window.
 
-[Unreleased]: https://github.com/HamidDidNotEat/Ultimate-Debloat-Pack/compare/v0.1.3...HEAD
+[Unreleased]: https://github.com/HamidDidNotEat/Ultimate-Debloat-Pack/compare/v0.1.4...HEAD
+[0.1.4]: https://github.com/HamidDidNotEat/Ultimate-Debloat-Pack/compare/v0.1.3...v0.1.4
 [0.1.3]: https://github.com/HamidDidNotEat/Ultimate-Debloat-Pack/compare/v0.1.2...v0.1.3
 [0.1.2]: https://github.com/HamidDidNotEat/Ultimate-Debloat-Pack/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/HamidDidNotEat/Ultimate-Debloat-Pack/compare/v0.1.0...v0.1.1

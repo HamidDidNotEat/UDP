@@ -33,6 +33,25 @@ Autoruns runs after every uninstall (Win11Debloat, BCU, Edge), so it shows only 
 5. Leave drivers, security software and anything you do not recognise alone.
 6. Close Autoruns with the X. UDP continues automatically.
 
+## Usually safe to switch off
+
+- Chat apps and game launchers that you open yourself: Discord, Steam, Epic Games, Battle.net, EA app, Ubisoft Connect
+- Music and video apps: Spotify, iTunes helpers
+- Cloud sync you do not use: OneDrive, Dropbox, Google Drive
+- Meeting apps you do not need at startup: Teams, Zoom, Skype
+- Update checkers of apps you rarely use (for example Adobe or Java): you then update those apps by opening them
+- Yellow entries: their file no longer exists, they are leftovers
+
+## Leave these on
+
+- Anything from your graphics, audio, network, mouse or keyboard maker (NVIDIA, AMD, Intel, Realtek, Logitech, ...)
+- Your antivirus or security software, including the Windows Security icon (`SecurityHealth`)
+- Game anti-cheat services (Easy Anti-Cheat, BattlEye, Riot Vanguard)
+- Everything on the **Drivers** tab
+- Anything you do not recognise: look it up first
+
+If something stops working after the restart, open Autoruns again and tick the entry back on.
+
 **Do I need to save?** No. Unticking an entry is applied immediately and takes effect at the next restart. *File > Save* only exports a list of entries for comparing later; you do not need it.
 
 The first time it runs, Autoruns shows Microsoft's license terms. Read and accept them yourself; UDP does not accept them for you.

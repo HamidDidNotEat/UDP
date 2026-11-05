@@ -231,7 +231,7 @@ Planned for the next `v0.1.x` releases:
 - [x] Edge removal: reliable result check (v0.1.1)
 - [x] Edge removal: remove the leftover Edge shortcuts (v0.1.2)
 - [x] Clearer step-by-step guides for the tools you work in (v0.1.3)
-- [ ] Autoruns: what is usually safe to switch off
+- [x] Autoruns: what is usually safe to switch off (v0.1.4)
 - [ ] Win11Debloat: choose exactly which apps to remove
 - [ ] Browser: replace Edge on the taskbar with the new browser
 - [ ] Browser: make it the default for every web file and link type

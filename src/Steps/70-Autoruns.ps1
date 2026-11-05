@@ -36,13 +36,27 @@ Everything that starts with Windows: programs, services, drivers, scheduled task
 3. To stop something from starting, untick its checkbox. To undo, tick it again.
 4. Never use right-click > Delete: an unticked entry can be turned back on, a deleted one cannot.
 
+## Usually safe to switch off
+- Chat apps and game launchers that you open yourself: Discord, Steam, Epic Games, Battle.net, EA app, Ubisoft Connect
+- Music and video apps: Spotify, iTunes helpers
+- Cloud sync you do not use: OneDrive, Dropbox, Google Drive
+- Meeting apps you do not need at startup: Teams, Zoom, Skype
+- Update checkers of apps you rarely use (for example Adobe or Java): you then update those apps by opening them
+- Yellow entries: their file no longer exists, they are leftovers
+
+## Leave these on
+- Anything from your graphics, audio, network, mouse or keyboard maker (NVIDIA, AMD, Intel, Realtek, Logitech, ...)
+- Your antivirus or security software, including the Windows Security icon (SecurityHealth)
+- Game anti-cheat services (Easy Anti-Cheat, BattlEye, Riot Vanguard)
+- Everything on the "Drivers" tab
+- Anything you do not recognise: look it up first
 ## Do I need to save?
 No. Unticking an entry is applied immediately and takes effect at the next restart. "File > Save" only exports a list for comparing later: you do not need it.
 
 ## When you are done
 Close Autoruns with the X. UDP continues automatically.
 
-> Colours: yellow means the file no longer exists (usually a leftover); pink means there is no verified publisher, so look it up before changing it.
+> Colours: yellow means the file no longer exists (usually a leftover); pink means there is no verified publisher, so look it up before changing it. If something stops working after the restart, open Autoruns again and tick it back on.
 '@
 }
 
