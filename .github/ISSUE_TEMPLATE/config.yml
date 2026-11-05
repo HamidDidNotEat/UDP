@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Questions and FAQ
+    url: https://github.com/HamidDidNotEat/Ultimate-Debloat-Pack#faq
+    about: Many questions (Edge outside the EEA, WebView2, managed extensions, one restart) are answered in the FAQ.
+  - name: Report a security problem
+    url: https://github.com/HamidDidNotEat/Ultimate-Debloat-Pack/security/advisories/new
+    about: Please report security problems privately, not in a public issue.

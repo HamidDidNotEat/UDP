@@ -1,0 +1,78 @@
+name: Bug report
+description: Something did not work as expected.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a problem.
+        **Please attach the UDP log:** it is in `C:\ProgramData\UDP\logs` (one file per run, named `UDP_<date>_<time>.log`).
+        For a security problem, do not open an issue: use the **Report a vulnerability** button in the Security tab instead.
+  - type: input
+    id: version
+    attributes:
+      label: UDP version
+      description: Shown at the bottom left of the UDP window.
+      placeholder: "0.1.0"
+    validations:
+      required: true
+  - type: input
+    id: windows
+    attributes:
+      label: Windows version
+      description: Press Win+R and run "winver".
+      placeholder: "Windows 11 Pro 25H2 (build 26200.1234)"
+    validations:
+      required: true
+  - type: dropdown
+    id: step
+    attributes:
+      label: Where did it happen?
+      options:
+        - Start-up or the wizard pages
+        - System Restore point
+        - Win11Debloat
+        - O&O ShutUp10++
+        - Bulk Crap Uninstaller
+        - Alternative browser or extensions
+        - Edge removal
+        - NVCleanstall
+        - Autoruns
+        - Results page or restart
+        - Other
+    validations:
+      required: true
+  - type: dropdown
+    id: environment
+    attributes:
+      label: Where did you run UDP?
+      options:
+        - Virtual machine
+        - Real PC
+    validations:
+      required: true
+  - type: checkboxes
+    id: mode
+    attributes:
+      label: Mode
+      options:
+        - label: It happened in a dry run
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Describe what you did and what you saw. Screenshots help.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+    validations:
+      required: true
+  - type: textarea
+    id: log
+    attributes:
+      label: Log
+      description: Paste the relevant part of the UDP log, or drag the log file here.
+      render: text

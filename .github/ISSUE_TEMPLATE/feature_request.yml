@@ -1,0 +1,26 @@
+name: Feature request
+description: Suggest an improvement or a new tool.
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the idea. UDP only runs well-known tools from their official sources, and never removes things on its own where a tool is meant to be interactive. Suggestions that fit these rules are the easiest to accept.
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem would this solve?
+      description: Describe what you are trying to do and what is missing or annoying today.
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Your idea
+      description: How should UDP behave? For a new tool, link its official website or repository.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives you considered
