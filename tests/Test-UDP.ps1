@@ -114,6 +114,19 @@ foreach ($case in @(@(26200, 1, $true), @(26100, 4484, $true), @(26100, 4483, $f
     $supported = Test-UdpTaskbarLayoutSupported -Context @{ System = @{ Build = $case[0]; UBR = $case[1] } }
     Assert-Udp ($supported -eq $case[2]) "Taskbar layout on build $($case[0]).$($case[1]): $($case[2])"
 }
+$associationsXml = [xml](New-UdpDefaultAssociationsXml -Version 3 -Associations ([pscustomobject]@{ ApplicationName = 'Firefox'; Associations = @(
+                [pscustomobject]@{ Identifier = 'https'; ProgId = 'FirefoxURL-308046B0AF4A39CB' },
+                [pscustomobject]@{ Identifier = '.pdf'; ProgId = 'FirefoxPDF-308046B0AF4A39CB' }) }))
+$associationNodes = @($associationsXml.DefaultAssociations.Association)
+Assert-Udp ($associationsXml.DefaultAssociations.Version -eq '3' -and $associationNodes.Count -eq 2) 'Default associations file has the Version and every type'
+Assert-Udp (@($associationNodes | Where-Object { $_.Suggested -ne 'true' }).Count -eq 0) 'Every default association is applied once only (Suggested)'
+Assert-Udp (-not (Test-UdpDefaultAssociationsSupported -Context @{ System = @{ EditionID = 'Core'; Build = 26200 } }).Available) 'Default associations policy is not offered on Windows Home'
+Assert-Udp ((Test-UdpDefaultAssociationsSupported -Context @{ System = @{ EditionID = 'Professional'; Build = 26200 } }).Available) 'Default associations policy is offered on Windows 11 Pro'
+$firefoxConfig = $context.Config.tools.browser.browsers.firefox
+if (Test-UdpBrowserInstalled -Browser $firefoxConfig) {
+    $firefoxTypes = Get-UdpBrowserAssociations -Browser $firefoxConfig
+    Assert-Udp ($firefoxTypes -and @($firefoxTypes.Associations | Where-Object { $_.Identifier -eq 'https' }).Count -eq 1) "Firefox's registered types are read ($(@($firefoxTypes.Associations).Count) types)"
+}
 $edgeShortcuts = @(Get-UdpEdgeShortcuts)
 Assert-Udp (@($edgeShortcuts | Where-Object { $_ -notlike '*.lnk' }).Count -eq 0) "Get-UdpEdgeShortcuts only returns shortcuts ($($edgeShortcuts.Count) found)"
 Assert-Udp ((Get-UdpSubjectOrganization 'CN="Brave Software, Inc.", O="Brave Software, Inc.", L=San Francisco') -eq 'Brave Software, Inc.') 'Quoted O= is parsed'

@@ -288,14 +288,26 @@ function Update-UdpBrowserPage {
     else {
         $taskbarNote.Text = 'Not available on this PC: needs Windows 11 24H2 (or 22H2/23H2) with the June 2025 update or later. You can pin the browser yourself: right-click it in the Start menu > Pin to taskbar.'
     }
+    $defaultsNote = Get-UdpPageControl 'browser' 'DefaultsNote'
+    $support = Test-UdpDefaultAssociationsSupported -Context $ctx
+    if ($support.Available) {
+        $defaultsNote.Text = "Every link and file type $($browser.name) registers with Windows (for example http, https, .html, .pdf, .svg) opens in $($browser.name). Applied once, at your next sign-in."
+    }
+    else {
+        $defaultsNote.Text = "Not available on this PC: the policy $($support.Reason). UDP opens Settings > Default apps instead and shows you the two clicks needed."
+    }
     Update-UdpPolicyWarning
 }
 
 # The policy explanation is shown while an option that uses a Windows policy is ticked.
 function Update-UdpPolicyWarning {
-    $taskbar = Get-UdpPageControl 'browser' 'TaskbarCheck'
     $warning = Get-UdpPageControl 'browser' 'PolicyWarning'
-    if ($taskbar.IsChecked -and $taskbar.IsEnabled) { $warning.Visibility = 'Visible' } else { $warning.Visibility = 'Collapsed' }
+    $visible = $false
+    foreach ($name in 'TaskbarCheck', 'DefaultsCheck') {
+        $check = Get-UdpPageControl 'browser' $name
+        if ($check.IsChecked -and $check.IsEnabled) { $visible = $true }
+    }
+    if ($visible) { $warning.Visibility = 'Visible' } else { $warning.Visibility = 'Collapsed' }
 }
 
 function Initialize-UdpBrowserPage {
@@ -312,6 +324,13 @@ function Initialize-UdpBrowserPage {
     }
     $taskbar.Add_Checked({ Update-UdpPolicyWarning })
     $taskbar.Add_Unchecked({ Update-UdpPolicyWarning })
+    $defaults = Get-UdpPageControl 'browser' 'DefaultsCheck'
+    if (-not (Test-UdpDefaultAssociationsSupported -Context $script:Wizard.Context).Available) {
+        $defaults.IsChecked = $false
+        $defaults.IsEnabled = $false
+    }
+    $defaults.Add_Checked({ Update-UdpPolicyWarning })
+    $defaults.Add_Unchecked({ Update-UdpPolicyWarning })
     Update-UdpBrowserPage
 }
 
@@ -382,6 +401,7 @@ function Get-UdpWizardSelection {
             Extensions   = [bool](Get-UdpPageControl 'browser' 'ExtensionsCheck').IsChecked
             ExtensionIds = (Get-UdpCheckedTags (Get-UdpPageControl 'browser' 'ExtensionsPanel'))
             Taskbar      = [bool]((Get-UdpPageControl 'browser' 'TaskbarCheck').IsChecked -and (Get-UdpPageControl 'browser' 'TaskbarCheck').IsEnabled)
+            SetDefault   = [bool]((Get-UdpPageControl 'browser' 'DefaultsCheck').IsChecked -and (Get-UdpPageControl 'browser' 'DefaultsCheck').IsEnabled)
         }
         edge         = @{
             Enabled            = (& $enabled 'edge')

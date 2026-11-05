@@ -130,6 +130,7 @@ function Get-UdpSystemInfo {
         Build             = $build
         UBR               = $currentVersion.UBR
         DisplayVersion    = $currentVersion.DisplayVersion
+        EditionID         = [string]$currentVersion.EditionID
         IsWindows11       = ($build -ge 22000)
         IsSupportedOS     = ($build -ge 10240)
         Architecture      = Get-UdpArchitecture

@@ -128,7 +128,7 @@ More in [docs/order-of-operations.md](docs/order-of-operations.md).
 | Win11Debloat | Run Win11Debloat again and restore its registry backup; reinstall apps from the Microsoft Store |
 | ShutUp10++ | ShutUp10++ > Actions > Undo all changes |
 | Bulk Crap Uninstaller | Reinstall the program, or use the restore point |
-| Browser policies (extensions, taskbar) | Welcome page > "Revert browser policies created by UDP", or `UDP.ps1 -RevertBrowserPolicies` |
+| Browser policies (extensions, taskbar, default apps) | Welcome page > "Revert browser policies created by UDP", or `UDP.ps1 -RevertBrowserPolicies` |
 | Edge | Reinstall from [microsoft.com/edge](https://www.microsoft.com/edge) |
 | NVCleanstall | Install the standard driver from [nvidia.com](https://www.nvidia.com/drivers) |
 | Autoruns | Open Autoruns and tick the entry again |
@@ -234,7 +234,7 @@ Planned for the next `v0.1.x` releases:
 - [x] Autoruns: what is usually safe to switch off (v0.1.4)
 - [x] Win11Debloat: choose exactly which apps to remove (v0.1.5)
 - [x] Browser: replace Edge on the taskbar with the new browser (v0.1.6)
-- [ ] Browser: make it the default for every web file and link type
+- [x] Browser: make it the default for every web file and link type (v0.1.7)
 - [ ] Before/after report after the restart
 
 See the [CHANGELOG](CHANGELOG.md) for what each release changed.

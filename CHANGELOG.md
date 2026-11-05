@@ -4,6 +4,15 @@ All notable changes to Ultimate Debloat Pack are listed here. The format follows
 
 ## [Unreleased]
 
+## [0.1.7] - 2026-11-05
+
+### Added
+
+- **The new browser becomes the default for every link and file type it registers** (for example http, https, .html, .pdf, .svg, .webp), not only for web links. UDP uses Windows' default associations policy (the method documented for organisations) with every association marked `Suggested`, so Windows applies it once, at the next sign-in, and you can still choose other default apps later.
+- A clear explanation on the browser page of how the taskbar and default apps options work, and how to remove them.
+- Available on Windows 11 22H2 or later, on Pro, Enterprise and Education. On Windows Home, or with the option unticked, UDP opens Settings > Default apps as before.
+- "Revert browser policies created by UDP" also removes this policy.
+
 ## [0.1.6] - 2026-11-05
 
 ### Added
@@ -77,7 +86,8 @@ Found during the first virtual machine test, planned for the next releases:
 - Edge removal can report "Failed" although Edge was removed: the result is checked before Edge's own uninstaller has finished.
 - Edge shortcuts (desktop, Start menu) stay behind after Edge removal and open an empty window.
 
-[Unreleased]: https://github.com/HamidDidNotEat/Ultimate-Debloat-Pack/compare/v0.1.6...HEAD
+[Unreleased]: https://github.com/HamidDidNotEat/Ultimate-Debloat-Pack/compare/v0.1.7...HEAD
+[0.1.7]: https://github.com/HamidDidNotEat/Ultimate-Debloat-Pack/compare/v0.1.6...v0.1.7
 [0.1.6]: https://github.com/HamidDidNotEat/Ultimate-Debloat-Pack/compare/v0.1.5...v0.1.6
 [0.1.5]: https://github.com/HamidDidNotEat/Ultimate-Debloat-Pack/compare/v0.1.4...v0.1.5
 [0.1.4]: https://github.com/HamidDidNotEat/Ultimate-Debloat-Pack/compare/v0.1.3...v0.1.4

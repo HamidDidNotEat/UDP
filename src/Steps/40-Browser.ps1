@@ -37,7 +37,12 @@ function Get-UdpBrowserPlan {
     if ($Options.Taskbar) {
         $lines += "Taskbar: replace Edge with $($browser.name) through the taskbar layout policy, applied at the next sign-in (you can still unpin anything later)"
     }
-    $lines += 'Open Settings > Default apps so you can choose your default browser'
+    if ($Options.SetDefault -and (Test-UdpDefaultAssociationsSupported -Context $Context).Available) {
+        $lines += "Default apps: make $($browser.name) the default for all its link and file types through the default associations policy, applied once at the next sign-in"
+    }
+    else {
+        $lines += 'Open Settings > Default apps so you can choose your default browser'
+    }
     return $lines
 }
 
@@ -347,6 +352,121 @@ function Set-UdpTaskbarLayout {
     return "Taskbar: Edge is replaced by $($Browser.name) at the next sign-in."
 }
 
+# ---------------------------------------------------------------- default apps
+
+# The default associations policy exists on Pro, Enterprise and Education (not Home), and applying
+# each association only once ("Suggested") needs Windows 11 22H2 or later.
+function Test-UdpDefaultAssociationsSupported {
+    param([hashtable]$Context)
+    if ([string]$Context.System.EditionID -like 'Core*') {
+        return New-UdpAvailability $false 'needs Windows Pro, Enterprise or Education (this PC runs Windows Home)'
+    }
+    if ([int]$Context.System.Build -lt 22621) { return New-UdpAvailability $false 'needs Windows 11 version 22H2 or later' }
+    return New-UdpAvailability $true
+}
+
+# The link and file types the browser registers with Windows (its Capabilities key), which are the
+# rows Settings > Default apps shows for it.
+function Get-UdpBrowserAssociations {
+    param($Browser)
+    $roots = @('HKLM:\SOFTWARE\Clients\StartMenuInternet', 'HKLM:\SOFTWARE\WOW6432Node\Clients\StartMenuInternet', 'HKCU:\SOFTWARE\Clients\StartMenuInternet')
+    $skip = @('PSPath', 'PSParentPath', 'PSChildName', 'PSDrive', 'PSProvider')
+    foreach ($root in $roots) {
+        foreach ($key in (Get-ChildItem -Path $root -ErrorAction SilentlyContinue | Where-Object { $_.PSChildName -like $Browser.startMenuInternet })) {
+            $capabilities = Join-Path $key.PSPath 'Capabilities'
+            if (-not (Test-Path -LiteralPath $capabilities)) { continue }
+            $name = [string](Get-ItemProperty -LiteralPath $capabilities -ErrorAction SilentlyContinue).ApplicationName
+            if (-not $name -or $name.StartsWith('@')) { $name = $Browser.name }
+            $list = @()
+            foreach ($subKey in 'URLAssociations', 'FileAssociations') {
+                $values = Get-ItemProperty -LiteralPath (Join-Path $capabilities $subKey) -ErrorAction SilentlyContinue
+                if (-not $values) { continue }
+                foreach ($property in $values.PSObject.Properties) {
+                    if ($skip -contains $property.Name -or -not $property.Value) { continue }
+                    $list += [pscustomobject]@{ Identifier = $property.Name; ProgId = [string]$property.Value }
+                }
+            }
+            if ($list.Count -gt 0) { return [pscustomobject]@{ ApplicationName = $name; Associations = $list } }
+        }
+    }
+    return $null
+}
+
+function New-UdpDefaultAssociationsXml {
+    param($Associations, [int]$Version)
+    $application = [System.Security.SecurityElement]::Escape([string]$Associations.ApplicationName)
+    $lines = @(
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        '<!-- Written by Ultimate Debloat Pack (UDP). Suggested="true": applied once per Version, so you can change your defaults later. -->',
+        "<DefaultAssociations Version=`"$Version`">"
+    )
+    foreach ($association in $Associations.Associations) {
+        $identifier = [System.Security.SecurityElement]::Escape([string]$association.Identifier)
+        $progId = [System.Security.SecurityElement]::Escape([string]$association.ProgId)
+        $lines += "  <Association Identifier=`"$identifier`" ProgId=`"$progId`" ApplicationName=`"$application`" Suggested=`"true`" />"
+    }
+    $lines += '</DefaultAssociations>'
+    return ($lines -join "`r`n")
+}
+
+# Makes the browser the default for every type it registers, through the default associations
+# policy (the method documented for organisations). UDP never writes Windows' protected
+# UserChoice settings itself. Returns a note when the policy is set, or $null when the user should
+# choose in Settings instead (Windows Home, older Windows, or a policy set by someone else).
+function Set-UdpDefaultAssociations {
+    param([hashtable]$Context, [string]$BrowserId, $Browser)
+
+    $config = (Get-UdpToolConfig -Context $Context -Id 'browser').defaultAssociations
+    $support = Test-UdpDefaultAssociationsSupported -Context $Context
+    if (-not $support.Available) {
+        Write-UdpLog "Default apps: the policy $($support.Reason); UDP opens Settings instead." -Level Info
+        return $null
+    }
+
+    $associations = Get-UdpBrowserAssociations -Browser $Browser
+    if (-not $associations) {
+        if ($Context.DryRun) {
+            Write-UdpLog "[dry run] would read the link and file types $($Browser.name) registers and make it their default through the default associations policy" -Level DryRun
+            return 'Dry run: default apps not changed.'
+        }
+        Write-UdpLog "Default apps: $($Browser.name) has not registered its link and file types with Windows; UDP opens Settings instead." -Level Warning
+        return $null
+    }
+
+    # Same browser and same types as last time: keep the Version, so Windows does not apply the
+    # defaults again over choices you made since. Anything else: next Version, applied once.
+    $file = Join-Path $env:ProgramData "UDP\$($config.fileName)"
+    $previous = (Get-UdpState).SystemPolicies | Where-Object { $_.Name -eq 'DefaultAssociations' } | Select-Object -First 1
+    $version = 1
+    if ($previous -and $previous.Version -gt 0) { $version = $previous.Version }
+    $xml = New-UdpDefaultAssociationsXml -Associations $associations -Version $version
+    $unchanged = (Test-Path -LiteralPath $file) -and ([System.IO.File]::ReadAllText($file) -eq $xml)
+    if ($previous -and -not $unchanged) {
+        $version = $previous.Version + 1
+        $xml = New-UdpDefaultAssociationsXml -Associations $associations -Version $version
+    }
+    $types = ($associations.Associations | ForEach-Object { $_.Identifier }) -join ', '
+
+    if ($Context.DryRun) {
+        Write-UdpLog "[dry run] would write $file and set $($config.valueName) in $($config.policyKey) ($types):`r`n$xml" -Level DryRun
+        return 'Dry run: default apps not changed.'
+    }
+
+    $current = Get-ItemProperty -Path $config.policyKey -Name $config.valueName -ErrorAction SilentlyContinue
+    if ($current -and [string]$current.($config.valueName) -ne $file) {
+        Write-UdpLog "Default apps: $($config.valueName) is already set to '$($current.($config.valueName))' by someone else; UDP opens Settings instead." -Level Warning
+        return $null
+    }
+
+    $folder = Split-Path -Parent $file
+    if (-not (Test-Path -LiteralPath $folder)) { New-Item -ItemType Directory -Path $folder -Force | Out-Null }
+    [System.IO.File]::WriteAllText($file, $xml, (New-Object System.Text.UTF8Encoding($false)))
+    Set-UdpPolicyValue -Key $config.policyKey -Name $config.valueName -Value $file -Type String | Out-Null
+    Add-UdpSystemPolicyState -Entry @{ Name = 'DefaultAssociations'; Key = $config.policyKey; Values = @($config.valueName); File = $file; Version = $version; Browser = $BrowserId }
+    Write-UdpLog "Default apps: $($Browser.name) becomes the default for $types at the next sign-in." -Level Info
+    return "Default apps: $($Browser.name) becomes the default for its $($associations.Associations.Count) link and file types at the next sign-in."
+}
+
 function Get-UdpDefaultBrowserBriefing {
     param([string]$BrowserName)
     return @"
@@ -404,8 +524,16 @@ function Invoke-UdpBrowser {
         $notes += (Set-UdpTaskbarLayout -Context $Context -BrowserId $Options.Browser -Browser $browser)
     }
 
-    # 4. Default browser (the user does it in Settings)
-    if ($Context.DryRun) {
+    # 4. Default browser: through the default associations policy where Windows supports it,
+    #    otherwise you choose it in Settings.
+    $defaultNote = $null
+    if ($Options.SetDefault) {
+        $defaultNote = Set-UdpDefaultAssociations -Context $Context -BrowserId $Options.Browser -Browser $browser
+    }
+    if ($defaultNote) {
+        $notes += $defaultNote
+    }
+    elseif ($Context.DryRun) {
         Write-UdpLog '[dry run] would open Settings > Default apps with instructions' -Level DryRun
     }
     else {

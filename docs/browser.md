@@ -65,6 +65,17 @@ With *Replace Edge with this browser on the taskbar* ticked (the default), UDP s
 - **Supported Windows versions:** Windows 11 24H2 from build 26100.4484 (KB5060829), 22H2/23H2 from build 22621/22631.5549 (KB5060826), and every later version. On older versions the option is unavailable, because Windows would put the pins back at every policy refresh.
 - **Existing policies:** if an administrator or another tool already set a taskbar layout, UDP leaves it alone.
 
+## Default apps: the new browser for every link and file type
+
+With *Make this browser the default for all its link and file types* ticked (the default), UDP sets Windows' **default associations policy**, the method [Microsoft documents for organisations](https://learn.microsoft.com/windows/client-management/mdm/policy-csp-applicationdefaults):
+
+- **The types:** UDP reads every link and file type the browser registers with Windows (its `Capabilities` key): the rows *Settings > Default apps* shows for it, for example `http`, `https`, `.htm`, `.html`, `.pdf`, `.svg`, `.webp`, `.xht`, `.xhtml`.
+- **What UDP writes:** the file `C:\ProgramData\UDP\DefaultAssociations.xml`, and the policy value `DefaultAssociationsConfiguration` in `HKLM\SOFTWARE\Policies\Microsoft\Windows\System`.
+- **Applied once:** every association carries `Suggested="true"`. Windows applies it once per `Version`, at your next sign-in, instead of at every sign-in, so you can still choose other default apps later. Running UDP again with the same browser keeps the `Version`, so your later choices stay; choosing another browser increases it.
+- **Requirements:** Windows 11 22H2 or later, on Pro, Enterprise or Education. The policy does not exist on Windows Home: there, and when the option is unticked, UDP opens *Settings > Default apps* at the end of the step and shows the two clicks needed.
+- **Never forged:** UDP never writes Windows' protected `UserChoice` settings itself.
+- **Existing policies:** if a default associations policy is already set by someone else, UDP leaves it alone and opens Settings instead.
+
 ## Revert
 
 On the welcome page, click **Revert browser policies created by UDP**, or run:
@@ -76,6 +87,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\UDP.ps1 -RevertBrowser
 The revert:
 - removes only the extension IDs listed in `state.json`
 - removes the taskbar layout policy values UDP set, and its `TaskbarLayout.xml` (your current pins stay as they are)
+- removes the default associations policy value UDP set, and its `DefaultAssociations.xml` (your current default apps stay as they are)
 - deletes the `ExtensionSettings` value only if UDP created it and it is now empty
 - deletes the policy key only if UDP created it and nothing else is stored in it
 

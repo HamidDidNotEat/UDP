@@ -25,9 +25,21 @@
         <TextBlock Text="Taskbar" Style="{StaticResource SectionTitle}"/>
         <CheckBox x:Name="TaskbarCheck" IsChecked="True" Content="Replace Edge with this browser on the taskbar"/>
         <TextBlock x:Name="TaskbarNote" Style="{StaticResource Muted}" Margin="22,0,0,4"/>
+
+        <TextBlock Text="Default apps" Style="{StaticResource SectionTitle}"/>
+        <CheckBox x:Name="DefaultsCheck" IsChecked="True" Content="Make this browser the default for all its link and file types"/>
+        <TextBlock x:Name="DefaultsNote" Style="{StaticResource Muted}" Margin="22,0,0,4"/>
+
         <Border x:Name="PolicyWarning" Style="{StaticResource WarningBox}">
-            <TextBlock Style="{StaticResource Body}" Margin="0"
-                       Text="How this works: UDP uses the taskbar layout policy built into Windows, the one companies use, with a small file in C:\ProgramData\UDP. Windows applies it once, at your next sign-in (after the restart at the end). You can still unpin, add or move anything afterwards, and Windows will not put the pins back. To remove the policy, use 'Revert browser policies created by UDP' on the welcome page; your pins then stay as they are."/>
+            <StackPanel>
+                <TextBlock Text="Please read: how these two options work" Style="{StaticResource Body}" FontWeight="SemiBold"/>
+                <TextBlock Style="{StaticResource Body}"
+                           Text="Windows does not let programs change your taskbar or your default apps directly. UDP therefore uses two policies built into Windows, the ones companies use: the taskbar layout policy and the default associations policy, each with a small file in C:\ProgramData\UDP."/>
+                <TextBlock Style="{StaticResource Body}"
+                           Text="Windows applies them once, at your next sign-in (after the restart at the end). Afterwards you can still unpin or move anything and choose other default apps in Settings: Windows does not change them back. Windows may mention that some settings are managed by your organization."/>
+                <TextBlock Style="{StaticResource Body}" Margin="0"
+                           Text="To remove both policies, use 'Revert browser policies created by UDP' on the welcome page. Your current pins and default apps then stay as they are."/>
+            </StackPanel>
         </Border>
 
         <Border Style="{StaticResource Card}">
@@ -37,7 +49,7 @@
                            Text="Installs the browser with winget (or the official installer if winget fails). With extensions ticked, UDP writes one policy value, ExtensionSettings, under HKLM\SOFTWARE\Policies for that browser. Policies that already exist are kept."/>
                 <TextBlock Text="Default browser" Style="{StaticResource SectionTitle}"/>
                 <TextBlock Style="{StaticResource Body}"
-                           Text="Windows does not let programs set the default browser in a clean, supported way, and UDP does not work around that. At the end of this step UDP opens Settings > Default apps and shows you the two clicks needed."/>
+                           Text="UDP never forges the protected settings where Windows stores your default apps. With 'Make this browser the default' ticked, it uses the default associations policy (Windows Pro, Enterprise or Education). Otherwise, and on Windows Home, it opens Settings > Default apps at the end of this step and shows you the two clicks needed."/>
                 <TextBlock Text="How to undo" Style="{StaticResource SectionTitle}"/>
                 <TextBlock Style="{StaticResource Body}"
                            Text="Uninstall the browser from Settings > Apps. Remove the extension policies with 'Revert browser policies created by UDP' on the welcome page, or run: UDP.ps1 -RevertBrowserPolicies. Only the entries UDP added are removed."/>

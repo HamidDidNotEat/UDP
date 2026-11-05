@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "project": {
     "name": "UDP (Ultimate Debloat Pack)",
-    "version": "0.1.6",
+    "version": "0.1.7",
     "repository": "HamidDidNotEat/Ultimate-Debloat-Pack",
     "branch": "main",
     "releaseAsset": "UDP.zip",
@@ -131,6 +131,13 @@
         ],
         "notes": "Windows taskbar layout policy (Start Layout GPO: LockedStartLayout + StartLayoutFile). PinListPlacement=Replace removes the default pins such as Edge; every pin gets PinGeneration=1 so users can unpin it for good.",
         "docs": "https://learn.microsoft.com/windows/configuration/taskbar/pinned-apps"
+      },
+      "defaultAssociations": {
+        "policyKey": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\System",
+        "valueName": "DefaultAssociationsConfiguration",
+        "fileName": "DefaultAssociations.xml",
+        "notes": "Group Policy 'Set a default associations configuration file' (Windows Pro, Enterprise, Education). Every association is marked Suggested=true (Windows 11 22H2+), so Windows applies it once per Version instead of at every sign-in.",
+        "docs": "https://learn.microsoft.com/windows/client-management/mdm/policy-csp-applicationdefaults"
       },
       "browsers": {
         "firefox": {
