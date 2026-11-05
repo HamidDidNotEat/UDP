@@ -1,0 +1,22 @@
+# Runs the self-tests on Windows with Windows PowerShell 5.1 on every push and pull request.
+name: Tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  self-test:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Self-test (syntax, encoding, config, XAML, online sources)
+        shell: powershell
+        run: powershell.exe -NoProfile -ExecutionPolicy Bypass -STA -File tests\Test-UDP.ps1 -Online

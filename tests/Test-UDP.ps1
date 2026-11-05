@@ -81,6 +81,9 @@ foreach ($browser in $context.Config.tools.browser.browsers.PSObject.Properties)
     Assert-Udp ([bool]$browser.Value.winget) "browser $($browser.Name) has a winget id"
 }
 Assert-Udp ($context.Config.tools.edgeRemoval.sha256 -match '^[0-9a-f]{64}$') 'Edge removal has a pinned SHA256'
+$version = $context.Config.project.version
+$changelog = [System.IO.File]::ReadAllText((Join-Path $root 'CHANGELOG.md'))
+Assert-Udp ($changelog.Contains("## [$version]")) "CHANGELOG.md has a section for version $version"
 $catalogIds = @(Get-UdpStepCatalog | ForEach-Object { $_.Id })
 foreach ($step in Get-UdpStepCatalog) {
     foreach ($function in $step.Available, $step.Plan, $step.Invoke) {
