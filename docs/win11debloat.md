@@ -9,6 +9,26 @@
 
 Win11Debloat removes preinstalled Store (Appx) apps and applies registry tweaks for privacy and usability: telemetry, ads, suggestions, Bing in search, Copilot, Recall and more. It works on Windows 11 and Windows 10; options that only exist on one version are skipped automatically.
 
+## Choosing the apps to remove
+
+The Win11Debloat page lists the apps found on this PC. The list comes from Win11Debloat's own `Config/Apps.json` in the release that will run, so it always matches that version. It is grouped by Win11Debloat's recommendation:
+
+- **Safe to remove:** most of them are ticked by default.
+- **Optional:** remove them only if you do not use them (for example Paint, Snipping Tool, Outlook, OneDrive).
+- **Not recommended:** removing them can break Windows features (for example the Microsoft Store or Terminal).
+
+The list starts with Win11Debloat's recommended selection. **Recommended selection** and **Select none** reset it, and **Show apps that are not installed** lists the rest. Point at an app to see what it is. Microsoft Edge is never listed: UDP's own Edge removal step handles it.
+
+How UDP passes your choice:
+
+| Settings | Apps | Arguments |
+|----------|------|-----------|
+| Recommended | Recommended selection | `-RunDefaults` |
+| Recommended | Your own selection | `-RunDefaultsLite -RemoveApps -Apps <list>` |
+| Custom | Any | your switches, plus `-RemoveApps -Apps <list>` if at least one app is ticked |
+
+`-RunDefaultsLite` is Win11Debloat's recommended settings without app removal. If Win11Debloat's app list cannot be loaded (no internet at start-up), the page offers its recommended selection as a whole instead.
+
 ## Modes in UDP
 
 **Recommended defaults** runs Win11Debloat with `-RunDefaults -Silent`. This is Win11Debloat's own default preset (its `Config/DefaultSettings.json`). It:

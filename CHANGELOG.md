@@ -4,6 +4,19 @@ All notable changes to Ultimate Debloat Pack are listed here. The format follows
 
 ## [Unreleased]
 
+## [0.1.5] - 2026-11-05
+
+### Added
+
+- **Choose which apps Win11Debloat removes.** The Win11Debloat page lists the apps found on this PC, from Win11Debloat's own list in the release that will run, grouped by its recommendation: safe to remove, optional, not recommended. The list starts with Win11Debloat's recommended selection; "Recommended selection" and "Select none" reset it, and apps that are not installed can be shown too. Point at an app to see what it is.
+- Recommended settings work with your own app choice: UDP then runs Win11Debloat with `-RunDefaultsLite -RemoveApps -Apps <your list>`.
+
+### Changed
+
+- The custom options no longer include "Remove the default selection of apps" and "Remove the Xbox app and Xbox Game Bar": the app list covers both.
+- Microsoft Edge is never offered in the app list. UDP's own Edge removal step handles it.
+- Win11Debloat is downloaded and verified once, when UDP starts, and reused for the run.
+
 ## [0.1.4] - 2026-11-05
 
 ### Added
@@ -56,7 +69,8 @@ Found during the first virtual machine test, planned for the next releases:
 - Edge removal can report "Failed" although Edge was removed: the result is checked before Edge's own uninstaller has finished.
 - Edge shortcuts (desktop, Start menu) stay behind after Edge removal and open an empty window.
 
-[Unreleased]: https://github.com/HamidDidNotEat/Ultimate-Debloat-Pack/compare/v0.1.4...HEAD
+[Unreleased]: https://github.com/HamidDidNotEat/Ultimate-Debloat-Pack/compare/v0.1.5...HEAD
+[0.1.5]: https://github.com/HamidDidNotEat/Ultimate-Debloat-Pack/compare/v0.1.4...v0.1.5
 [0.1.4]: https://github.com/HamidDidNotEat/Ultimate-Debloat-Pack/compare/v0.1.3...v0.1.4
 [0.1.3]: https://github.com/HamidDidNotEat/Ultimate-Debloat-Pack/compare/v0.1.2...v0.1.3
 [0.1.2]: https://github.com/HamidDidNotEat/Ultimate-Debloat-Pack/compare/v0.1.1...v0.1.2

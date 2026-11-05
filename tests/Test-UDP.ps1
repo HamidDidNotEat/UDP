@@ -116,6 +116,24 @@ $custom = Get-UdpWin11DebloatArguments -Context $context -Options @{ Mode = 'Cus
 Assert-Udp ($custom -contains '-DisableTelemetry') 'Win11Debloat custom: chosen switch is passed'
 Assert-Udp ($custom -notcontains '-ForceRemoveEdge') 'Win11Debloat custom: -ForceRemoveEdge is never passed'
 Assert-Udp ($custom -notcontains '-Hide3dObjects') 'Win11Debloat custom: Windows 10-only option is dropped on Windows 11'
+$lite = Get-UdpWin11DebloatArguments -Context $context -Options @{ Mode = 'Defaults'; RemoveDefaultApps = $false }
+Assert-Udp (($lite -contains '-RunDefaultsLite') -and ($lite -notcontains '-RunDefaults')) 'Win11Debloat without app list: unticking the apps gives -RunDefaultsLite'
+
+# With Win11Debloat's app list loaded (a small fake list here).
+$context.Win11DebloatCatalog = [pscustomobject]@{ Tag = 'test'; Apps = @(
+        [pscustomobject]@{ Id = 'App.A'; Ids = @('App.A'); Name = 'A'; Recommendation = 'safe'; Default = $true; Installed = $true }
+        [pscustomobject]@{ Id = 'App.B'; Ids = @('App.B'); Name = 'B'; Recommendation = 'optional'; Default = $false; Installed = $true }
+    )
+}
+$same = Get-UdpWin11DebloatArguments -Context $context -Options @{ Mode = 'Defaults'; Apps = @('App.A'); AppsCustomized = $false }
+Assert-Udp (($same -contains '-RunDefaults') -and ($same -notcontains '-Apps')) 'Recommended apps unchanged: plain -RunDefaults'
+$mine = Get-UdpWin11DebloatArguments -Context $context -Options @{ Mode = 'Defaults'; Apps = @('App.A', 'App.B', 'Microsoft.Edge'); AppsCustomized = $true }
+Assert-Udp (($mine -contains '-RunDefaultsLite') -and ($mine -contains '-RemoveApps')) 'Own app choice: -RunDefaultsLite -RemoveApps'
+Assert-Udp ($mine[[array]::IndexOf($mine, '-Apps') + 1] -eq 'App.A,App.B') 'Own app choice: -Apps lists the chosen apps and never Edge'
+$none = Get-UdpWin11DebloatArguments -Context $context -Options @{ Mode = 'Custom'; Switches = @('DisableTelemetry'); Apps = @(); AppsCustomized = $true }
+Assert-Udp (($none -contains '-DisableTelemetry') -and ($none -notcontains '-RemoveApps')) 'Custom settings with no app ticked: no app removal'
+Assert-Udp ((@(Get-UdpWin11DebloatPlan -Context $context -Options @{ Mode = 'Defaults'; Apps = @('App.A', 'App.B'); AppsCustomized = $true }) -join ' ') -match '-Apps <2 apps>') 'Plan shows the app list as a count'
+$context.Win11DebloatCatalog = $null
 
 # ------------------------------------------------------------------ XAML
 Write-Host 'XAML'
@@ -162,9 +180,17 @@ if ($Online) {
     foreach ($option in $tool.customOptions) {
         Assert-Udp ($known -contains $option.switch) "Win11Debloat $($release.tag_name) knows -$($option.switch)"
     }
-    foreach ($argument in @($tool.baseArguments) + '-RunDefaults', '-LogPath') {
+    foreach ($argument in @($tool.baseArguments) + '-RunDefaults', '-RunDefaultsLite', '-RemoveApps', '-Apps', '-LogPath') {
         Assert-Udp ($known -contains $argument.TrimStart('-')) "Win11Debloat $($release.tag_name) knows $argument"
     }
+}
+
+if ($Online) {
+    $catalogContext = @{ Root = $root; DryRun = $true; WorkDir = $workDir; Config = $context.Config; Quiet = $true; System = $context.System }
+    $catalog = Get-UdpWin11DebloatCatalog -Context $catalogContext
+    Assert-Udp ($catalog -and @($catalog.Apps).Count -gt 50) "Win11Debloat app list loads ($(@($catalog.Apps).Count) apps)"
+    Assert-Udp (@($catalog.Apps | Where-Object { $_.Ids -contains 'Microsoft.Edge' }).Count -eq 0) 'Win11Debloat app list never offers Edge'
+    Assert-Udp (@($catalog.Apps | Where-Object { -not $_.Name }).Count -eq 0) 'Every app in the list has a name'
 }
 
 # ------------------------------------------------------------------ dry run of every step

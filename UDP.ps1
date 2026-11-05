@@ -85,6 +85,9 @@ $context = @{
     Sync    = $null
     Config  = $null
     System  = $null
+    # Filled at start-up: the verified Win11Debloat release and its app list.
+    Win11DebloatRelease = $null
+    Win11DebloatCatalog = $null
 }
 
 try {
@@ -106,6 +109,12 @@ try {
     Write-UdpLog 'Checking this PC' -Level Info
     $context.System = Get-UdpSystemInfo
     foreach ($line in ((Format-UdpSystemInfo -System $context.System) -split "`r`n")) { Write-UdpLog $line -Level Detail }
+
+    # Win11Debloat's own app list, so the wizard can offer exactly the apps the version that runs knows.
+    if ($context.System.Internet) {
+        Write-UdpLog "Loading Win11Debloat's app list" -Level Info
+        $context.Win11DebloatCatalog = Get-UdpWin11DebloatCatalog -Context $context
+    }
 
     Show-UdpWizard -Context $context
 }

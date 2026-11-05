@@ -14,9 +14,9 @@
                 <TextBlock Text="What it does" Style="{StaticResource SectionTitle}" Margin="0,0,0,4"/>
                 <TextBlock Style="{StaticResource Body}"
                            Text="Removes a selection of preinstalled apps (the list is maintained by Win11Debloat) and applies registry tweaks for privacy and usability. It runs without a window; its output appears in UDP's log."/>
-                <TextBlock Text="What the recommended defaults change" Style="{StaticResource SectionTitle}"/>
+                <TextBlock Text="What the recommended settings change" Style="{StaticResource SectionTitle}"/>
                 <TextBlock Style="{StaticResource Body}"
-                           Text="Win11Debloat's own default preset: removes its default app selection; turns off telemetry and targeted ads, tips and suggestions, lock screen tips, Edge ads, Bing web results and Store suggestions in search, Copilot, Recall, Click to Do and the AI service auto-start; disables widgets; hides the Chat icon; shows file extensions; hides 3D Objects; turns off network access during Modern Standby."/>
+                           Text="Win11Debloat's own default preset: turns off telemetry and targeted ads, tips and suggestions, lock screen tips, Edge ads, Bing web results and Store suggestions in search, Copilot, Recall, Click to Do and the AI service auto-start; disables widgets; hides the Chat icon; shows file extensions; hides 3D Objects; turns off network access during Modern Standby. The apps to remove are chosen separately below."/>
                 <TextBlock Text="Risks" Style="{StaticResource SectionTitle}"/>
                 <TextBlock Style="{StaticResource Body}"
                            Text="A removed app is gone until you reinstall it from the Microsoft Store. Some tweaks hide features you might use (widgets, Copilot). Explorer restarts at the end, so the screen may flicker."/>
@@ -31,9 +31,29 @@
                        Text="Win11Debloat's own Edge removal is never used: it relies on Microsoft's uninstaller, which only works in the European Economic Area. Edge is handled by UDP's Edge removal step instead."/>
         </Border>
 
-        <TextBlock Text="Mode" Style="{StaticResource SectionTitle}"/>
-        <RadioButton x:Name="ModeDefaults" GroupName="W11DMode" IsChecked="True" Content="Recommended defaults (Win11Debloat's default preset, runs silently)"/>
-        <RadioButton x:Name="ModeCustom" GroupName="W11DMode" Content="Custom: choose the options below"/>
+        <TextBlock Text="Apps to remove" Style="{StaticResource SectionTitle}"/>
+        <TextBlock x:Name="AppsSummary" Style="{StaticResource Muted}" Margin="0,0,0,6"/>
+        <StackPanel x:Name="AppsTools" Orientation="Horizontal" Margin="0,0,0,8">
+            <Button x:Name="AppsRecommendedButton" Content="Recommended selection" Style="{StaticResource SecondaryButton}" Margin="0"/>
+            <Button x:Name="AppsNoneButton" Content="Select none" Style="{StaticResource SecondaryButton}"/>
+            <CheckBox x:Name="AppsShowAllCheck" Content="Show apps that are not installed" Margin="16,0,0,0" VerticalAlignment="Center"/>
+        </StackPanel>
+        <Border x:Name="AppsCard" Style="{StaticResource Card}" Padding="12,6">
+            <ScrollViewer MaxHeight="320" VerticalScrollBarVisibility="Auto">
+                <StackPanel x:Name="AppsPanel" Margin="0,0,8,0"/>
+            </ScrollViewer>
+        </Border>
+        <Border x:Name="AppsFallback" Style="{StaticResource WarningBox}" Visibility="Collapsed">
+            <StackPanel>
+                <TextBlock Style="{StaticResource Body}"
+                           Text="Win11Debloat's app list could not be loaded (no internet connection, or GitHub could not be reached), so apps cannot be chosen one by one."/>
+                <CheckBox x:Name="RemoveDefaultAppsCheck" IsChecked="True" Content="Remove Win11Debloat's recommended selection of apps"/>
+            </StackPanel>
+        </Border>
+
+        <TextBlock Text="Settings" Style="{StaticResource SectionTitle}"/>
+        <RadioButton x:Name="ModeDefaults" GroupName="W11DMode" IsChecked="True" Content="Recommended settings (Win11Debloat's default preset, runs silently)"/>
+        <RadioButton x:Name="ModeCustom" GroupName="W11DMode" Content="Custom: choose the settings below"/>
 
         <Border x:Name="CustomPanel" Style="{StaticResource Card}" Margin="22,6,0,10" Visibility="Collapsed">
             <StackPanel x:Name="CustomOptionsPanel"/>

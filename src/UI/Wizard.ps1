@@ -135,6 +135,94 @@ function Initialize-UdpWin11DebloatPage {
     (Get-UdpPageControl 'win11debloat' 'ModeCustom').Add_Checked({ (Get-UdpPageControl 'win11debloat' 'CustomPanel').Visibility = 'Visible' })
     (Get-UdpPageControl 'win11debloat' 'ModeDefaults').Add_Checked({ (Get-UdpPageControl 'win11debloat' 'CustomPanel').Visibility = 'Collapsed' })
     $customPanel.Visibility = 'Collapsed'
+
+    # Apps to remove: Win11Debloat's own list, pre-ticked with its recommended selection.
+    $catalog = $script:Wizard.Context.Win11DebloatCatalog
+    $script:Wizard.AppChoice = @{}
+    if (-not $catalog) {
+        foreach ($name in 'AppsSummary', 'AppsTools', 'AppsCard') { (Get-UdpPageControl 'win11debloat' $name).Visibility = 'Collapsed' }
+        (Get-UdpPageControl 'win11debloat' 'AppsFallback').Visibility = 'Visible'
+        return
+    }
+    foreach ($app in $catalog.Apps) { $script:Wizard.AppChoice[$app.Id] = $app.Default }
+    (Get-UdpPageControl 'win11debloat' 'AppsRecommendedButton').Add_Click({
+            foreach ($app in $script:Wizard.Context.Win11DebloatCatalog.Apps) { $script:Wizard.AppChoice[$app.Id] = $app.Default }
+            Update-UdpAppsList
+        })
+    (Get-UdpPageControl 'win11debloat' 'AppsNoneButton').Add_Click({
+            foreach ($app in $script:Wizard.Context.Win11DebloatCatalog.Apps) { $script:Wizard.AppChoice[$app.Id] = $false }
+            Update-UdpAppsList
+        })
+    $showAll = Get-UdpPageControl 'win11debloat' 'AppsShowAllCheck'
+    $showAll.Add_Checked({ Update-UdpAppsList })
+    $showAll.Add_Unchecked({ Update-UdpAppsList })
+    Update-UdpAppsList
+}
+
+$script:RecommendationGroups = @(
+    @{ Key = 'safe'; Title = 'Safe to remove'; Color = '#15803D' }
+    @{ Key = 'optional'; Title = 'Optional: remove only if you do not use them'; Color = '#4B5563' }
+    @{ Key = 'unsafe'; Title = 'Not recommended: removing these can break Windows features'; Color = '#DC2626' }
+)
+
+function Test-UdpAppsCustomized {
+    $w = $script:Wizard
+    foreach ($app in $w.Context.Win11DebloatCatalog.Apps) {
+        if ([bool]$w.AppChoice[$app.Id] -ne $app.Default) { return $true }
+    }
+    return $false
+}
+
+function Update-UdpAppsSummary {
+    $w = $script:Wizard
+    $onPc = @($w.Context.Win11DebloatCatalog.Apps | Where-Object { $_.Installed -ne $false })
+    $chosen = @($onPc | Where-Object { $w.AppChoice[$_.Id] })
+    $which = 'Win11Debloat''s recommended selection'
+    if (Test-UdpAppsCustomized) { $which = 'your selection' }
+    (Get-UdpPageControl 'win11debloat' 'AppsSummary').Text = "$($chosen.Count) of the $($onPc.Count) apps found on this PC will be removed ($which). Point at an app to see what it is."
+}
+
+# Rebuilds the app checkboxes from $script:Wizard.AppChoice, grouped by Win11Debloat's recommendation.
+function Update-UdpAppsList {
+    $w = $script:Wizard
+    $panel = Get-UdpPageControl 'win11debloat' 'AppsPanel'
+    $showAll = [bool](Get-UdpPageControl 'win11debloat' 'AppsShowAllCheck').IsChecked
+    $panel.Children.Clear()
+    foreach ($group in $script:RecommendationGroups) {
+        $apps = @($w.Context.Win11DebloatCatalog.Apps |
+                Where-Object { $_.Recommendation -eq $group.Key -and ($showAll -or $_.Installed -ne $false) } | Sort-Object Name)
+        if ($apps.Count -eq 0) { continue }
+        $top = 10
+        if ($panel.Children.Count -eq 0) { $top = 2 }
+        $header = New-UdpTextBlock -Text $group.Title -Style 'SectionTitle' -Margin (New-Object System.Windows.Thickness(0, $top, 0, 2))
+        $header.Foreground = New-UdpBrush $group.Color
+        [void]$panel.Children.Add($header)
+        foreach ($app in $apps) {
+            $check = New-Object System.Windows.Controls.CheckBox
+            $check.Tag = $app.Id
+            $check.IsChecked = [bool]$w.AppChoice[$app.Id]
+            $label = $app.Name
+            if ($app.Installed -eq $false) { $label += '  (not installed)' }
+            $check.Content = $label
+            $tip = $app.Id
+            if ($app.Description) { $tip = "$($app.Description)`n$($app.Id)" }
+            $check.ToolTip = $tip
+            $check.Add_Checked({ $script:Wizard.AppChoice[[string]$this.Tag] = $true; Update-UdpAppsSummary })
+            $check.Add_Unchecked({ $script:Wizard.AppChoice[[string]$this.Tag] = $false; Update-UdpAppsSummary })
+            [void]$panel.Children.Add($check)
+        }
+    }
+    Update-UdpAppsSummary
+}
+
+# The apps part of the Win11Debloat selection (see Get-UdpWin11DebloatArguments).
+function Get-UdpWin11DebloatAppSelection {
+    $w = $script:Wizard
+    if (-not $w.Context.Win11DebloatCatalog) {
+        return @{ Apps = $null; AppsCustomized = $false; RemoveDefaultApps = [bool](Get-UdpPageControl 'win11debloat' 'RemoveDefaultAppsCheck').IsChecked }
+    }
+    $apps = @($w.Context.Win11DebloatCatalog.Apps | Where-Object { $w.AppChoice[$_.Id] } | ForEach-Object { $_.Ids })
+    return @{ Apps = $apps; AppsCustomized = (Test-UdpAppsCustomized); RemoveDefaultApps = $true }
 }
 
 function Initialize-UdpShutUp10Page {
@@ -252,8 +340,17 @@ function Get-UdpWizardSelection {
     $bcuMode = 'RunOnce'
     if ((Get-UdpPageControl 'bcu' 'ModeInstall').IsChecked) { $bcuMode = 'Install' }
 
+    $w11Apps = Get-UdpWin11DebloatAppSelection
+
     return @{
-        win11debloat = @{ Enabled = (& $enabled 'win11debloat'); Mode = $w11Mode; Switches = (Get-UdpCheckedTags (Get-UdpPageControl 'win11debloat' 'CustomOptionsPanel')) }
+        win11debloat = @{
+            Enabled           = (& $enabled 'win11debloat')
+            Mode              = $w11Mode
+            Switches          = (Get-UdpCheckedTags (Get-UdpPageControl 'win11debloat' 'CustomOptionsPanel'))
+            Apps              = $w11Apps.Apps
+            AppsCustomized    = $w11Apps.AppsCustomized
+            RemoveDefaultApps = $w11Apps.RemoveDefaultApps
+        }
         shutup10     = @{ Enabled = (& $enabled 'shutup10'); Mode = $oosuMode }
         bcu          = @{ Enabled = (& $enabled 'bcu'); Mode = $bcuMode }
         browser      = @{

@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "project": {
     "name": "UDP (Ultimate Debloat Pack)",
-    "version": "0.1.4",
+    "version": "0.1.5",
     "repository": "HamidDidNotEat/Ultimate-Debloat-Pack",
     "branch": "main",
     "releaseAsset": "UDP.zip",
@@ -29,9 +29,13 @@
       "entryScript": "Win11Debloat.ps1",
       "baseArguments": [ "-Silent" ],
       "neverPass": [ "ForceRemoveEdge", "CreateRestorePoint", "CLI", "Sysprep", "User", "Config", "RunSavedSettings" ],
+      "neverRemoveApps": [ "Microsoft.Edge", "XPFFTQ037JWMHS" ],
+      "neverRemoveAppsNotes": "Edge is removed by UDP's own Edge removal step (Win11Debloat's Edge removal only works in the EEA), so it is never offered in the app list.",
+      "appCatalog": {
+        "apps": "Config/Apps.json",
+        "names": "Config/Languages/en-US/Apps.json"
+      },
       "customOptions": [
-        { "switch": "RemoveApps", "group": "Apps", "label": "Remove the default selection of preinstalled apps", "default": true },
-        { "switch": "RemoveGamingApps", "group": "Apps", "label": "Remove the Xbox app and Xbox Game Bar", "default": false },
         { "switch": "DisableTelemetry", "group": "Privacy", "label": "Disable telemetry, tracking and targeted ads", "default": true },
         { "switch": "DisableSuggestions", "group": "Privacy", "label": "Disable tips, tricks and suggested content throughout Windows", "default": true },
         { "switch": "DisableLockscreenTips", "group": "Privacy", "label": "Disable tips and tricks on the lock screen", "default": true },
