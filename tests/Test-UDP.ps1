@@ -102,6 +102,8 @@ Assert-Udp ((Format-UdpArgument '/quiet') -eq '/quiet') 'Format-UdpArgument leav
 $esc = [char]27
 Assert-Udp ((ConvertTo-UdpPlainText "$esc[40;32m EDGE REMOVED! $esc[97m-done") -eq ' EDGE REMOVED! -done') 'Terminal colour codes are removed from tool output'
 Assert-Udp ((@(Get-UdpEdgeExePaths) | Where-Object { $_ -is [array] }).Count -eq 0) 'Get-UdpEdgeExePaths returns a flat list'
+$edgeShortcuts = @(Get-UdpEdgeShortcuts)
+Assert-Udp (@($edgeShortcuts | Where-Object { $_ -notlike '*.lnk' }).Count -eq 0) "Get-UdpEdgeShortcuts only returns shortcuts ($($edgeShortcuts.Count) found)"
 Assert-Udp ((Get-UdpSubjectOrganization 'CN="Brave Software, Inc.", O="Brave Software, Inc.", L=San Francisco') -eq 'Brave Software, Inc.') 'Quoted O= is parsed'
 Assert-Udp ((Get-UdpSubjectOrganization 'CN=Google LLC, O=Google LLC, L=Mountain View') -eq 'Google LLC') 'Plain O= is parsed'
 $browsers = @(Get-UdpInstalledBrowsers)

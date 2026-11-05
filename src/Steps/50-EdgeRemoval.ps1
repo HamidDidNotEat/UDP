@@ -11,13 +11,62 @@
 
 function Test-UdpEdgeRemovalAvailable {
     param([hashtable]$Context)
+    if (-not (Test-UdpEdgeInstalled)) {
+        # Edge is already gone: the step can still remove the shortcuts a previous removal left behind.
+        if (@(Get-UdpEdgeShortcuts).Count -gt 0) { return New-UdpAvailability $true }
+        return New-UdpAvailability $false 'Microsoft Edge is not installed.'
+    }
     if (-not $Context.System.Internet) { return New-UdpAvailability $false 'No internet connection.' }
-    if (-not $Context.System.EdgeInstalled) { return New-UdpAvailability $false 'Microsoft Edge is not installed.' }
     return New-UdpAvailability $true
+}
+
+# "Microsoft Edge" shortcuts on the desktop (yours and the all-users one) and in the Start menu
+# that point to Edge's msedge.exe. Shortcuts with any other target are never touched.
+function Get-UdpEdgeShortcuts {
+    $folders = @(
+        [Environment]::GetFolderPath('CommonDesktopDirectory'),
+        [Environment]::GetFolderPath('DesktopDirectory'),
+        [Environment]::GetFolderPath('CommonPrograms'),
+        [Environment]::GetFolderPath('Programs')
+    ) | Where-Object { $_ } | Select-Object -Unique
+
+    $shell = New-Object -ComObject WScript.Shell
+    $found = @()
+    foreach ($folder in $folders) {
+        foreach ($file in (Get-ChildItem -LiteralPath $folder -Filter 'Microsoft Edge*.lnk' -File -ErrorAction SilentlyContinue)) {
+            $target = $shell.CreateShortcut($file.FullName).TargetPath
+            if ($target -match '\\Microsoft\\Edge\\Application\\msedge\.exe$') { $found += $file.FullName }
+        }
+    }
+    return $found
+}
+
+# Once Edge is gone its shortcuts only open AveYo's link redirect, which shows an empty window.
+function Remove-UdpEdgeShortcuts {
+    param([hashtable]$Context)
+    $removed = 0
+    foreach ($shortcut in @(Get-UdpEdgeShortcuts)) {
+        if ($Context.DryRun) {
+            Write-UdpLog "[dry run] would remove the Edge shortcut $shortcut once Edge is gone" -Level DryRun
+            continue
+        }
+        try {
+            Remove-Item -LiteralPath $shortcut -Force -ErrorAction Stop
+            $removed++
+            Write-UdpLog "Removed the Edge shortcut $shortcut" -Level Info
+        }
+        catch {
+            Write-UdpLog "Could not remove ${shortcut}: $($_.Exception.Message)" -Level Warning
+        }
+    }
+    return $removed
 }
 
 function Get-UdpEdgeRemovalPlan {
     param([hashtable]$Context, [hashtable]$Options)
+    if (-not (Test-UdpEdgeInstalled)) {
+        return @("Edge is already removed: only remove its $(@(Get-UdpEdgeShortcuts).Count) leftover shortcut(s) on the desktop and in the Start menu")
+    }
     $tool = Get-UdpToolConfig -Context $Context -Id 'edgeRemoval'
     $extra = @()
     if ($Options.RemoveWidgets) { $extra += 'Widgets' }
@@ -27,7 +76,8 @@ function Get-UdpEdgeRemovalPlan {
     return @(
         "Download Edge_Removal.bat (AveYo/fox, commit $($tool.commit.Substring(0, 7))) and check its SHA256",
         "Remove Microsoft Edge and keep WebView2. Also remove: $also",
-        'Run it with no window, wait for Edge''s own uninstaller to finish, then check that Edge is gone and WebView2 is still there'
+        'Run it with no window, wait for Edge''s own uninstaller to finish, then check that Edge is gone and WebView2 is still there',
+        'Remove the leftover Edge shortcuts on the desktop and in the Start menu'
     )
 }
 
@@ -71,6 +121,12 @@ function Invoke-UdpEdgeRemoval {
 
     $tool = Get-UdpToolConfig -Context $Context -Id 'edgeRemoval'
 
+    if (-not (Test-UdpEdgeInstalled)) {
+        $count = Remove-UdpEdgeShortcuts -Context $Context
+        if ($Context.DryRun) { return New-UdpStepResult -Status Success -Message 'Dry run: Edge is already removed; leftover shortcuts not removed.' }
+        return New-UdpStepResult -Status Success -Message "Edge was already removed. $count leftover Edge shortcut(s) removed."
+    }
+
     # Never leave the user without a browser.
     $browsers = @(Get-UdpInstalledBrowsers)
     if ($browsers.Count -eq 0 -and -not $Context.DryRun) {
@@ -105,6 +161,7 @@ function Invoke-UdpEdgeRemoval {
 
     if ($Context.DryRun) {
         Write-UdpLog "[dry run] would run: powershell.exe -NoProfile -ExecutionPolicy Bypass -File `"$payloadPath`"" -Level DryRun
+        Remove-UdpEdgeShortcuts -Context $Context | Out-Null
         return New-UdpStepResult -Status Success -Message 'Dry run: Edge not removed.'
     }
 
@@ -117,11 +174,17 @@ function Invoke-UdpEdgeRemoval {
     $edgeGone = Wait-UdpEdgeRemoved -TimeoutSeconds 300
     $webView = Test-UdpWebView2Installed
     Write-UdpLog "WebView2 Runtime after removal: $(if ($webView) { 'present' } else { 'NOT FOUND' })" -Level Info
+    $cleanup = ''
+    if ($edgeGone) {
+        $count = Remove-UdpEdgeShortcuts -Context $Context
+        $cleanup = " $count leftover Edge shortcut(s) removed."
+    }
+
     if ($edgeGone -and $webView) {
-        return New-UdpStepResult -Status Success -Message 'Edge removed, WebView2 kept. Edge may come back after a major Windows update; run UDP again if it does.'
+        return New-UdpStepResult -Status Success -Message "Edge removed, WebView2 kept.$cleanup Edge may come back after a major Windows update; run UDP again if it does."
     }
     if ($edgeGone -and -not $Context.System.WebView2Installed) {
-        return New-UdpStepResult -Status Success -Message 'Edge removed. WebView2 was not installed before UDP ran either; some apps may ask you to install it.'
+        return New-UdpStepResult -Status Success -Message "Edge removed.$cleanup WebView2 was not installed before UDP ran either; some apps may ask you to install it."
     }
     if ($edgeGone) {
         return New-UdpStepResult -Status Failed -Message 'Edge was removed but WebView2 is missing afterwards. Reinstall it from https://developer.microsoft.com/microsoft-edge/webview2/'

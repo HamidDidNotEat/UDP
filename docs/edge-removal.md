@@ -38,6 +38,9 @@ So UDP:
 6. Makes sure Explorer is running again (the script restarts it).
 7. Waits for Edge's own uninstaller to finish. It keeps running in the background after the script ends, so UDP waits up to 5 minutes until both Edge's entry in *Settings > Apps* and `msedge.exe` are gone.
 8. Checks the result: the step succeeds when Edge is gone and WebView2 is still present. Otherwise the step fails and the log says exactly what is left.
+9. Removes the leftover **Microsoft Edge** shortcuts on the desktop (yours and the all-users one) and in the Start menu. Without Edge they only open the script's link redirect, which shows a small empty window. Only shortcuts that point to Edge's `msedge.exe` are removed, and only once Edge is gone.
+
+If Edge was already removed (for example by an earlier run), the step skips the script and only removes leftover shortcuts.
 
 ## Never without a browser
 

@@ -229,7 +229,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for the coding rules, how to update a too
 Planned for the next `v0.1.x` releases:
 
 - [x] Edge removal: reliable result check (v0.1.1)
-- [ ] Edge removal: remove the leftover Edge shortcuts
+- [x] Edge removal: remove the leftover Edge shortcuts (v0.1.2)
 - [ ] Clearer step-by-step guides for the tools you work in
 - [ ] Autoruns: what is usually safe to switch off
 - [ ] Win11Debloat: choose exactly which apps to remove

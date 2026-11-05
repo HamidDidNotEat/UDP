@@ -4,6 +4,13 @@ All notable changes to Ultimate Debloat Pack are listed here. The format follows
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-11-05
+
+### Added
+
+- **Edge removal cleans up Edge's shortcuts.** Once Edge is gone, UDP removes the **Microsoft Edge** shortcuts left on the desktop (yours and the all-users one) and in the Start menu. They only opened a small empty window. Only shortcuts pointing to Edge's `msedge.exe` are removed.
+- Running UDP again on a PC where Edge was already removed now cleans up those leftover shortcuts too.
+
 ## [0.1.1] - 2026-11-05
 
 ### Fixed
@@ -36,6 +43,7 @@ Found during the first virtual machine test, planned for the next releases:
 - Edge removal can report "Failed" although Edge was removed: the result is checked before Edge's own uninstaller has finished.
 - Edge shortcuts (desktop, Start menu) stay behind after Edge removal and open an empty window.
 
-[Unreleased]: https://github.com/HamidDidNotEat/Ultimate-Debloat-Pack/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/HamidDidNotEat/Ultimate-Debloat-Pack/compare/v0.1.2...HEAD
+[0.1.2]: https://github.com/HamidDidNotEat/Ultimate-Debloat-Pack/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/HamidDidNotEat/Ultimate-Debloat-Pack/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/HamidDidNotEat/Ultimate-Debloat-Pack/releases/tag/v0.1.0

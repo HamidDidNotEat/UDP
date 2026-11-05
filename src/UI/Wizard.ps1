@@ -215,6 +215,11 @@ function Update-UdpEdgePage {
 }
 
 function Initialize-UdpEdgePage {
+    if (-not (Test-UdpEdgeInstalled) -and @(Get-UdpEdgeShortcuts).Count -gt 0) {
+        $note = Get-UdpPageControl 'edge' 'UnavailableNote'
+        $note.Text = 'Edge is already removed. Tick the box to remove the Edge shortcuts it left on the desktop and in the Start menu.'
+        $note.Visibility = 'Visible'
+    }
     $check = Get-UdpPageControl 'edge' 'EnableCheck'
     $check.Add_Checked({ Update-UdpEdgePage })
     $check.Add_Unchecked({ Update-UdpEdgePage })
