@@ -4,6 +4,14 @@ All notable changes to Ultimate Debloat Pack are listed here. The format follows
 
 ## [Unreleased]
 
+## [0.1.6] - 2026-11-05
+
+### Added
+
+- **Edge is replaced by the new browser on the taskbar.** UDP sets the taskbar layout policy built into Windows (the method documented for organisations): Edge's pin is removed, and File Explorer, the new browser and the Microsoft Store are pinned. Windows applies it at the next sign-in. Every pin can still be unpinned, and Windows does not put it back.
+- Available on Windows 11 24H2 from build 26100.4484, 22H2/23H2 from build 22621/22631.5549, and later. On older versions the option is unavailable.
+- "Revert browser policies created by UDP" also removes this taskbar policy.
+
 ## [0.1.5] - 2026-11-05
 
 ### Added
@@ -69,7 +77,8 @@ Found during the first virtual machine test, planned for the next releases:
 - Edge removal can report "Failed" although Edge was removed: the result is checked before Edge's own uninstaller has finished.
 - Edge shortcuts (desktop, Start menu) stay behind after Edge removal and open an empty window.
 
-[Unreleased]: https://github.com/HamidDidNotEat/Ultimate-Debloat-Pack/compare/v0.1.5...HEAD
+[Unreleased]: https://github.com/HamidDidNotEat/Ultimate-Debloat-Pack/compare/v0.1.6...HEAD
+[0.1.6]: https://github.com/HamidDidNotEat/Ultimate-Debloat-Pack/compare/v0.1.5...v0.1.6
 [0.1.5]: https://github.com/HamidDidNotEat/Ultimate-Debloat-Pack/compare/v0.1.4...v0.1.5
 [0.1.4]: https://github.com/HamidDidNotEat/Ultimate-Debloat-Pack/compare/v0.1.3...v0.1.4
 [0.1.3]: https://github.com/HamidDidNotEat/Ultimate-Debloat-Pack/compare/v0.1.2...v0.1.3

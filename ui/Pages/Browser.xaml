@@ -22,6 +22,14 @@
             <TextBlock x:Name="ManagedNote" Style="{StaticResource Body}" Margin="0"/>
         </Border>
 
+        <TextBlock Text="Taskbar" Style="{StaticResource SectionTitle}"/>
+        <CheckBox x:Name="TaskbarCheck" IsChecked="True" Content="Replace Edge with this browser on the taskbar"/>
+        <TextBlock x:Name="TaskbarNote" Style="{StaticResource Muted}" Margin="22,0,0,4"/>
+        <Border x:Name="PolicyWarning" Style="{StaticResource WarningBox}">
+            <TextBlock Style="{StaticResource Body}" Margin="0"
+                       Text="How this works: UDP uses the taskbar layout policy built into Windows, the one companies use, with a small file in C:\ProgramData\UDP. Windows applies it once, at your next sign-in (after the restart at the end). You can still unpin, add or move anything afterwards, and Windows will not put the pins back. To remove the policy, use 'Revert browser policies created by UDP' on the welcome page; your pins then stay as they are."/>
+        </Border>
+
         <Border Style="{StaticResource Card}">
             <StackPanel>
                 <TextBlock Text="What it changes" Style="{StaticResource SectionTitle}" Margin="0,0,0,4"/>

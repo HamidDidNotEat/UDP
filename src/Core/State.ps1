@@ -1,5 +1,6 @@
-# %ProgramData%\UDP\state.json remembers what UDP changed that it can undo later
-# (currently: browser extension policies). Only entries listed here are ever removed by a revert.
+# %ProgramData%\UDP\state.json remembers what UDP changed that it can undo later: browser extension
+# policies and the Windows policies UDP sets (taskbar layout, default apps). Only entries listed
+# here are ever removed by a revert.
 
 function Get-UdpStatePath {
     return (Join-Path $env:ProgramData 'UDP\state.json')
@@ -31,7 +32,20 @@ function Get-UdpState {
             }
         }
     }
-    return @{ BrowserPolicies = $policies }
+    $system = @()
+    if ($state -and $state.systemPolicies) {
+        foreach ($entry in @($state.systemPolicies)) {
+            $system += @{
+                Name    = [string]$entry.name
+                Key     = [string]$entry.key
+                Values  = @($entry.values | ForEach-Object { [string]$_ })
+                File    = [string]$entry.file
+                Version = [int]$entry.version
+                Browser = [string]$entry.browser
+            }
+        }
+    }
+    return @{ BrowserPolicies = $policies; SystemPolicies = $system }
 }
 
 function Save-UdpState {
@@ -53,10 +67,22 @@ function Save-UdpState {
             createdKey   = $entry.CreatedKey
         }
     }
+    $system = @()
+    foreach ($entry in @($State.SystemPolicies | Where-Object { $_ })) {
+        $system += [ordered]@{
+            name    = $entry.Name
+            key     = $entry.Key
+            values  = @($entry.Values)
+            file    = $entry.File
+            version = $entry.Version
+            browser = $entry.Browser
+        }
+    }
     $document = [ordered]@{
         version         = 1
         updated         = (Get-Date).ToString('s')
         browserPolicies = @($policies)
+        systemPolicies  = @($system)
     }
     $json = ConvertTo-Json -InputObject $document -Depth 6
     [System.IO.File]::WriteAllText($path, $json, (New-Object System.Text.UTF8Encoding($false)))

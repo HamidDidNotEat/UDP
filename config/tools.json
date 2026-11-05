@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "project": {
     "name": "UDP (Ultimate Debloat Pack)",
-    "version": "0.1.5",
+    "version": "0.1.6",
     "repository": "HamidDidNotEat/Ultimate-Debloat-Pack",
     "branch": "main",
     "releaseAsset": "UDP.zip",
@@ -121,6 +121,17 @@
       "name": "Alternative browser",
       "description": "Installs Firefox, Chrome or Brave and can add privacy extensions through browser policies.",
       "defaultAppsUri": "ms-settings:defaultapps",
+      "taskbarLayout": {
+        "policyKey": "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\Explorer",
+        "fileName": "TaskbarLayout.xml",
+        "pins": [
+          { "type": "DesktopApp", "id": "Microsoft.Windows.Explorer" },
+          { "type": "Browser" },
+          { "type": "UWA", "id": "Microsoft.WindowsStore_8wekyb3d8bbwe!App" }
+        ],
+        "notes": "Windows taskbar layout policy (Start Layout GPO: LockedStartLayout + StartLayoutFile). PinListPlacement=Replace removes the default pins such as Edge; every pin gets PinGeneration=1 so users can unpin it for good.",
+        "docs": "https://learn.microsoft.com/windows/configuration/taskbar/pinned-apps"
+      },
       "browsers": {
         "firefox": {
           "name": "Mozilla Firefox",

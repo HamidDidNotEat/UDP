@@ -34,6 +34,9 @@ function Get-UdpBrowserPlan {
         $lines += "Add extensions through the $($browser.name) ExtensionSettings policy ($($browser.policy.installationMode)): $(($extensions | ForEach-Object { $_.name }) -join ', ')"
         $lines += "Registry: $($browser.policy.key)\$($browser.policy.valueName)"
     }
+    if ($Options.Taskbar) {
+        $lines += "Taskbar: replace Edge with $($browser.name) through the taskbar layout policy, applied at the next sign-in (you can still unpin anything later)"
+    }
     $lines += 'Open Settings > Default apps so you can choose your default browser'
     return $lines
 }
@@ -153,7 +156,7 @@ function Remove-UdpBrowserPolicies {
     param([hashtable]$Context)
 
     $state = Get-UdpState
-    if ($state.BrowserPolicies.Count -eq 0) {
+    if ($state.BrowserPolicies.Count -eq 0 -and $state.SystemPolicies.Count -eq 0) {
         Write-UdpLog 'No browser policies created by UDP were found.' -Level Info
         return 0
     }
@@ -187,9 +190,161 @@ function Remove-UdpBrowserPolicies {
         }
     }
 
-    Save-UdpState -State @{ BrowserPolicies = @() }
-    Write-UdpLog "Browser policy revert finished: $removed extension entries removed. Restart the browser to apply." -Level Success
+    # Windows policies (taskbar layout, default apps): remove only the values UDP created, and its file.
+    foreach ($entry in $state.SystemPolicies) {
+        foreach ($valueName in $entry.Values) {
+            if (Get-ItemProperty -Path $entry.Key -Name $valueName -ErrorAction SilentlyContinue) {
+                Remove-ItemProperty -Path $entry.Key -Name $valueName -ErrorAction SilentlyContinue
+                $removed++
+                Write-UdpLog "Removed the policy value $valueName from $($entry.Key) ($($entry.Name))" -Level Info
+            }
+        }
+        if ($entry.File -and (Test-Path -LiteralPath $entry.File)) {
+            Remove-Item -LiteralPath $entry.File -Force -ErrorAction SilentlyContinue
+            Write-UdpLog "Removed $($entry.File)" -Level Info
+        }
+    }
+
+    Save-UdpState -State @{ BrowserPolicies = @(); SystemPolicies = @() }
+    Write-UdpLog "Browser policy revert finished: $removed policy entries removed. Restart the browser, and sign out and in again, to apply." -Level Success
     return $removed
+}
+
+# Sets a Windows policy value for UDP. If the value already holds something else (set by an
+# administrator or another tool), nothing is changed and $false is returned.
+function Set-UdpPolicyValue {
+    param([string]$Key, [string]$Name, $Value, [ValidateSet('String', 'ExpandString', 'DWord')][string]$Type)
+    $current = Get-ItemProperty -Path $Key -Name $Name -ErrorAction SilentlyContinue
+    if ($current -and [string]$current.$Name -ne [string]$Value) {
+        Write-UdpLog "$Name in $Key is already set to '$($current.$Name)' by someone else; UDP leaves it alone." -Level Warning
+        return $false
+    }
+    if (-not (Test-Path -LiteralPath $Key)) { New-Item -Path $Key -Force | Out-Null }
+    New-ItemProperty -Path $Key -Name $Name -Value $Value -PropertyType $Type -Force | Out-Null
+    Write-UdpLog "Policy: $Name = $Value in $Key" -Level Info
+    return $true
+}
+
+# Records (or updates) a Windows policy UDP set, so the revert can remove it.
+function Add-UdpSystemPolicyState {
+    param([hashtable]$Entry)
+    $state = Get-UdpState
+    $state.SystemPolicies = @($state.SystemPolicies | Where-Object { $_.Name -ne $Entry.Name }) + @($Entry)
+    Save-UdpState -State $state
+}
+
+# ---------------------------------------------------------------- taskbar
+
+# Windows 11 builds where pins set by the taskbar layout policy can be unpinned for good
+# (PinGeneration): 24H2 with KB5060829 (26100.4484), 22H2/23H2 with KB5060826 (22621/22631.5549),
+# and every later version. Older builds would put the pins back at every policy refresh.
+function Test-UdpTaskbarLayoutSupported {
+    param([hashtable]$Context)
+    $build = [int]$Context.System.Build
+    $ubr = [int]$Context.System.UBR
+    if ($build -ge 26200) { return $true }
+    if ($build -eq 26100) { return ($ubr -ge 4484) }
+    if ($build -eq 22621 -or $build -eq 22631) { return ($ubr -ge 5549) }
+    return $false
+}
+
+# The browser's own Start menu shortcut: the taskbar layout pins desktop apps by their shortcut.
+function Get-UdpBrowserShortcut {
+    param($Browser)
+    $targets = @($Browser.exePaths | ForEach-Object { (Expand-UdpPath $_).ToLowerInvariant() })
+    $shell = New-Object -ComObject WScript.Shell
+    foreach ($folder in @([Environment]::GetFolderPath('CommonPrograms'), [Environment]::GetFolderPath('Programs'))) {
+        foreach ($file in (Get-ChildItem -LiteralPath $folder -Filter '*.lnk' -File -ErrorAction SilentlyContinue)) {
+            $target = [string]$shell.CreateShortcut($file.FullName).TargetPath
+            if ($targets -contains $target.ToLowerInvariant()) { return $file.FullName }
+        }
+    }
+    return $null
+}
+
+function New-UdpTaskbarLayoutXml {
+    param([object[]]$Pins)
+    $lines = @(
+        '<?xml version="1.0" encoding="utf-8"?>',
+        '<!-- Written by Ultimate Debloat Pack (UDP). Remove it with "Revert browser policies created by UDP". -->',
+        '<LayoutModificationTemplate',
+        '    xmlns="http://schemas.microsoft.com/Start/2014/LayoutModification"',
+        '    xmlns:defaultlayout="http://schemas.microsoft.com/Start/2014/FullDefaultLayout"',
+        '    xmlns:start="http://schemas.microsoft.com/Start/2014/StartLayout"',
+        '    xmlns:taskbar="http://schemas.microsoft.com/Start/2014/TaskbarLayout"',
+        '    Version="1">',
+        '  <CustomTaskbarLayoutCollection PinListPlacement="Replace">',
+        '    <defaultlayout:TaskbarLayout>',
+        '      <taskbar:TaskbarPinList>'
+    )
+    foreach ($pin in $Pins) {
+        $id = [System.Security.SecurityElement]::Escape([string]$pin.id)
+        switch ($pin.type) {
+            'DesktopApp' { $lines += "        <taskbar:DesktopApp DesktopApplicationID=`"$id`" PinGeneration=`"1`"/>" }
+            'DesktopLink' { $lines += "        <taskbar:DesktopApp DesktopApplicationLinkPath=`"$id`" PinGeneration=`"1`"/>" }
+            'UWA' { $lines += "        <taskbar:UWA AppUserModelID=`"$id`" PinGeneration=`"1`"/>" }
+        }
+    }
+    $lines += @('      </taskbar:TaskbarPinList>', '    </defaultlayout:TaskbarLayout>', '  </CustomTaskbarLayoutCollection>', '</LayoutModificationTemplate>')
+    return ($lines -join "`r`n")
+}
+
+# Replaces Edge with the new browser on the taskbar through the taskbar layout policy, the method
+# documented for organisations. Windows applies it at the next sign-in. Every pin carries
+# PinGeneration="1", so you can unpin anything later and Windows does not put it back.
+# Returns a short note for the step result.
+function Set-UdpTaskbarLayout {
+    param([hashtable]$Context, [string]$BrowserId, $Browser)
+
+    $layout = (Get-UdpToolConfig -Context $Context -Id 'browser').taskbarLayout
+    if (-not (Test-UdpTaskbarLayoutSupported -Context $Context)) {
+        Write-UdpLog 'Taskbar: this Windows version cannot apply a taskbar layout that you can change later; the taskbar is left as it is.' -Level Warning
+        return 'Taskbar not changed (needs a newer Windows 11).'
+    }
+
+    $shortcut = Get-UdpBrowserShortcut -Browser $Browser
+    if (-not $shortcut) {
+        if (-not $Context.DryRun) {
+            Write-UdpLog "Taskbar: no Start menu shortcut of $($Browser.name) was found to pin; the taskbar is left as it is." -Level Warning
+            return 'Taskbar not changed (no Start menu shortcut found).'
+        }
+        $shortcut = Join-Path ([Environment]::GetFolderPath('CommonPrograms')) "$($Browser.name).lnk"
+    }
+
+    $pins = @()
+    foreach ($pin in $layout.pins) {
+        if ($pin.type -eq 'Browser') { $pins += [pscustomobject]@{ type = 'DesktopLink'; id = $shortcut } }
+        else { $pins += $pin }
+    }
+    $xml = New-UdpTaskbarLayoutXml -Pins $pins
+    $file = Join-Path $env:ProgramData "UDP\$($layout.fileName)"
+    $values = @(
+        @{ Name = 'StartLayoutFile'; Value = $file; Type = 'ExpandString' },
+        @{ Name = 'LockedStartLayout'; Value = 1; Type = 'DWord' }
+    )
+
+    if ($Context.DryRun) {
+        Write-UdpLog "[dry run] would write $file and set StartLayoutFile and LockedStartLayout in $($layout.policyKey):`r`n$xml" -Level DryRun
+        return 'Dry run: taskbar not changed.'
+    }
+
+    # Respect a taskbar layout set by an administrator or another tool.
+    foreach ($value in $values) {
+        $current = Get-ItemProperty -Path $layout.policyKey -Name $value.Name -ErrorAction SilentlyContinue
+        if ($current -and [string]$current.($value.Name) -ne [string]$value.Value) {
+            Write-UdpLog "Taskbar: $($value.Name) is already set to '$($current.($value.Name))' by someone else; UDP leaves the taskbar alone." -Level Warning
+            return 'Taskbar not changed (a taskbar layout policy already exists).'
+        }
+    }
+
+    $folder = Split-Path -Parent $file
+    if (-not (Test-Path -LiteralPath $folder)) { New-Item -ItemType Directory -Path $folder -Force | Out-Null }
+    [System.IO.File]::WriteAllText($file, $xml, (New-Object System.Text.UTF8Encoding($false)))
+    foreach ($value in $values) {
+        Set-UdpPolicyValue -Key $layout.policyKey -Name $value.Name -Value $value.Value -Type $value.Type | Out-Null
+    }
+    Add-UdpSystemPolicyState -Entry @{ Name = 'TaskbarLayout'; Key = $layout.policyKey; Values = @('StartLayoutFile', 'LockedStartLayout'); File = $file; Version = 1; Browser = $BrowserId }
+    return "Taskbar: Edge is replaced by $($Browser.name) at the next sign-in."
 }
 
 function Get-UdpDefaultBrowserBriefing {
@@ -244,7 +399,12 @@ function Invoke-UdpBrowser {
         $notes += "Extensions added by policy: $(($extensions | ForEach-Object { $_.name }) -join ', ')."
     }
 
-    # 3. Default browser (the user does it in Settings)
+    # 3. Taskbar: Edge's pin replaced by the new browser (applied at the next sign-in)
+    if ($Options.Taskbar) {
+        $notes += (Set-UdpTaskbarLayout -Context $Context -BrowserId $Options.Browser -Browser $browser)
+    }
+
+    # 4. Default browser (the user does it in Settings)
     if ($Context.DryRun) {
         Write-UdpLog '[dry run] would open Settings > Default apps with instructions' -Level DryRun
     }

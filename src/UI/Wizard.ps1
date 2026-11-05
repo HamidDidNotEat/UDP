@@ -280,6 +280,22 @@ function Update-UdpBrowserPage {
     }
     $panel.IsEnabled = [bool](Get-UdpPageControl 'browser' 'ExtensionsCheck').IsChecked
     (Get-UdpPageControl 'browser' 'ManagedNote').Text = $script:ManagedNotes[$id]
+
+    $taskbarNote = Get-UdpPageControl 'browser' 'TaskbarNote'
+    if (Test-UdpTaskbarLayoutSupported -Context $ctx) {
+        $taskbarNote.Text = "Edge's pin is removed and $($browser.name) is pinned next to File Explorer; the Microsoft Store stays pinned. Applied at your next sign-in."
+    }
+    else {
+        $taskbarNote.Text = 'Not available on this PC: needs Windows 11 24H2 (or 22H2/23H2) with the June 2025 update or later. You can pin the browser yourself: right-click it in the Start menu > Pin to taskbar.'
+    }
+    Update-UdpPolicyWarning
+}
+
+# The policy explanation is shown while an option that uses a Windows policy is ticked.
+function Update-UdpPolicyWarning {
+    $taskbar = Get-UdpPageControl 'browser' 'TaskbarCheck'
+    $warning = Get-UdpPageControl 'browser' 'PolicyWarning'
+    if ($taskbar.IsChecked -and $taskbar.IsEnabled) { $warning.Visibility = 'Visible' } else { $warning.Visibility = 'Collapsed' }
 }
 
 function Initialize-UdpBrowserPage {
@@ -289,6 +305,13 @@ function Initialize-UdpBrowserPage {
     $extensions = Get-UdpPageControl 'browser' 'ExtensionsCheck'
     $extensions.Add_Checked({ (Get-UdpPageControl 'browser' 'ExtensionsPanel').IsEnabled = $true })
     $extensions.Add_Unchecked({ (Get-UdpPageControl 'browser' 'ExtensionsPanel').IsEnabled = $false })
+    $taskbar = Get-UdpPageControl 'browser' 'TaskbarCheck'
+    if (-not (Test-UdpTaskbarLayoutSupported -Context $script:Wizard.Context)) {
+        $taskbar.IsChecked = $false
+        $taskbar.IsEnabled = $false
+    }
+    $taskbar.Add_Checked({ Update-UdpPolicyWarning })
+    $taskbar.Add_Unchecked({ Update-UdpPolicyWarning })
     Update-UdpBrowserPage
 }
 
@@ -358,6 +381,7 @@ function Get-UdpWizardSelection {
             Browser      = (Get-UdpSelectedBrowserId)
             Extensions   = [bool](Get-UdpPageControl 'browser' 'ExtensionsCheck').IsChecked
             ExtensionIds = (Get-UdpCheckedTags (Get-UdpPageControl 'browser' 'ExtensionsPanel'))
+            Taskbar      = [bool]((Get-UdpPageControl 'browser' 'TaskbarCheck').IsChecked -and (Get-UdpPageControl 'browser' 'TaskbarCheck').IsEnabled)
         }
         edge         = @{
             Enabled            = (& $enabled 'edge')

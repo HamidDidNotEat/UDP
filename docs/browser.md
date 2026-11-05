@@ -54,6 +54,17 @@ Any policy under `HKLM\SOFTWARE\Policies` makes the browser say it is managed. I
 - **Before writing:** UDP reads the current `ExtensionSettings` value and adds only its own extension IDs. An extension that an existing policy already configures is left unchanged.
 - **Recorded:** every ID UDP adds is written to `%ProgramData%\UDP\state.json`.
 
+## Taskbar: Edge replaced by the new browser
+
+With *Replace Edge with this browser on the taskbar* ticked (the default), UDP sets the **taskbar layout policy** built into Windows, the method [Microsoft documents for organisations](https://learn.microsoft.com/windows/configuration/taskbar/pinned-apps):
+
+- **What UDP writes:** the file `C:\ProgramData\UDP\TaskbarLayout.xml`, and the two values of the *Start Layout* policy in `HKLM\SOFTWARE\Policies\Microsoft\Windows\Explorer`: `StartLayoutFile` (path of the file) and `LockedStartLayout` (1).
+- **What the layout says:** `PinListPlacement="Replace"` removes Windows' default pins (Edge among them). File Explorer, the new browser (its Start menu shortcut) and the Microsoft Store are pinned in that order. Apps you pinned yourself stay where they are.
+- **You keep control:** every pin carries `PinGeneration="1"`, so you can unpin anything later and Windows does not put it back.
+- **When:** Windows applies the layout at your next sign-in, which is the restart at the end of UDP.
+- **Supported Windows versions:** Windows 11 24H2 from build 26100.4484 (KB5060829), 22H2/23H2 from build 22621/22631.5549 (KB5060826), and every later version. On older versions the option is unavailable, because Windows would put the pins back at every policy refresh.
+- **Existing policies:** if an administrator or another tool already set a taskbar layout, UDP leaves it alone.
+
 ## Revert
 
 On the welcome page, click **Revert browser policies created by UDP**, or run:
@@ -64,6 +75,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\UDP.ps1 -RevertBrowser
 
 The revert:
 - removes only the extension IDs listed in `state.json`
+- removes the taskbar layout policy values UDP set, and its `TaskbarLayout.xml` (your current pins stay as they are)
 - deletes the `ExtensionSettings` value only if UDP created it and it is now empty
 - deletes the policy key only if UDP created it and nothing else is stored in it
 

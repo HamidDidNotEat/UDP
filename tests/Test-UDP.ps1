@@ -102,6 +102,18 @@ Assert-Udp ((Format-UdpArgument '/quiet') -eq '/quiet') 'Format-UdpArgument leav
 $esc = [char]27
 Assert-Udp ((ConvertTo-UdpPlainText "$esc[40;32m EDGE REMOVED! $esc[97m-done") -eq ' EDGE REMOVED! -done') 'Terminal colour codes are removed from tool output'
 Assert-Udp ((@(Get-UdpEdgeExePaths) | Where-Object { $_ -is [array] }).Count -eq 0) 'Get-UdpEdgeExePaths returns a flat list'
+$layoutXml = [xml](New-UdpTaskbarLayoutXml -Pins @(
+        [pscustomobject]@{ type = 'DesktopApp'; id = 'Microsoft.Windows.Explorer' },
+        [pscustomobject]@{ type = 'DesktopLink'; id = 'C:\ProgramData\Microsoft\Windows\Start Menu\Programs\A & B.lnk' },
+        [pscustomobject]@{ type = 'UWA'; id = 'Microsoft.WindowsStore_8wekyb3d8bbwe!App' }))
+$pinNodes = @($layoutXml.LayoutModificationTemplate.CustomTaskbarLayoutCollection.TaskbarLayout.TaskbarPinList.ChildNodes)
+Assert-Udp ($layoutXml.LayoutModificationTemplate.CustomTaskbarLayoutCollection.PinListPlacement -eq 'Replace') 'Taskbar layout replaces the default pins (Edge)'
+Assert-Udp ($pinNodes.Count -eq 3 -and @($pinNodes | Where-Object { $_.PinGeneration -ne '1' }).Count -eq 0) 'Every taskbar pin can be unpinned for good (PinGeneration)'
+Assert-Udp ($pinNodes[1].DesktopApplicationLinkPath -eq 'C:\ProgramData\Microsoft\Windows\Start Menu\Programs\A & B.lnk') 'Taskbar layout escapes the shortcut path'
+foreach ($case in @(@(26200, 1, $true), @(26100, 4484, $true), @(26100, 4483, $false), @(22631, 5549, $true), @(22000, 9999, $false), @(19045, 1, $false))) {
+    $supported = Test-UdpTaskbarLayoutSupported -Context @{ System = @{ Build = $case[0]; UBR = $case[1] } }
+    Assert-Udp ($supported -eq $case[2]) "Taskbar layout on build $($case[0]).$($case[1]): $($case[2])"
+}
 $edgeShortcuts = @(Get-UdpEdgeShortcuts)
 Assert-Udp (@($edgeShortcuts | Where-Object { $_ -notlike '*.lnk' }).Count -eq 0) "Get-UdpEdgeShortcuts only returns shortcuts ($($edgeShortcuts.Count) found)"
 Assert-Udp ((Get-UdpSubjectOrganization 'CN="Brave Software, Inc.", O="Brave Software, Inc.", L=San Francisco') -eq 'Brave Software, Inc.') 'Quoted O= is parsed'
