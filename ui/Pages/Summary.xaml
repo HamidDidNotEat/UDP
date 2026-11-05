@@ -13,6 +13,10 @@
 
         <StackPanel x:Name="SummaryPanel"/>
 
+        <CheckBox x:Name="ReportCheck" IsChecked="True" Margin="0,4,0,10">
+            <TextBlock TextWrapping="Wrap" Text="After the restart, show what changed: UDP measures this PC now and once more after the restart (processes, RAM, services, startup entries, programs, apps, disk space)."/>
+        </CheckBox>
+
         <Border Style="{StaticResource WarningBox}">
             <StackPanel>
                 <TextBlock Style="{StaticResource Body}"

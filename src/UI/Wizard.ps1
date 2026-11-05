@@ -80,6 +80,22 @@ function Initialize-UdpWelcomePage {
         (Get-UdpPageControl 'welcome' 'PreflightWarnings').Visibility = 'Visible'
     }
 
+    # Last run, from state.json.
+    $lastRun = (Get-UdpState).LastRun
+    if ($lastRun) {
+        $failed = @($lastRun.results | Where-Object { $_.status -eq 'Failed' }).Count
+        $text = "UDP last ran on $(Format-UdpDate $lastRun.date) (version $($lastRun.version))."
+        if ($failed -gt 0) { $text += " $failed step(s) failed that time." }
+        if ($lastRun.reportPending) { $text += ' Its before/after report appears after the next restart.' }
+        (Get-UdpPageControl 'welcome' 'LastRunText').Text = $text
+        (Get-UdpPageControl 'welcome' 'LastRunBox').Visibility = 'Visible'
+        if ($lastRun.reportFile -and (Test-Path -LiteralPath $lastRun.reportFile)) {
+            $open = Get-UdpPageControl 'welcome' 'OpenReportButton'
+            $open.Visibility = 'Visible'
+            $open.Add_Click({ Show-UdpReportWindow -Context $script:Wizard.Context -LastRun (Get-UdpState).LastRun -Owner $script:Wizard.Window })
+        }
+    }
+
     $agree = Get-UdpPageControl 'welcome' 'AgreeCheck'
     $agree.Add_Checked({ Update-UdpNavigation })
     $agree.Add_Unchecked({ Update-UdpNavigation })
@@ -610,6 +626,7 @@ function Start-UdpWizardRun {
     $ctx = $w.Context
     $selection = $w.Selection
     $plan = @(Get-UdpRunPlan -Context $ctx -Selection $selection)
+    $selection.Report = [bool](Get-UdpPageControl 'summary' 'ReportCheck').IsChecked
 
     $list = Get-UdpPageControl 'run' 'StepList'
     $list.Children.Clear()
@@ -766,6 +783,7 @@ function Show-UdpFinishPage {
         $subtitle.Text = 'Every selected step has finished.'
     }
     (Get-UdpPageControl 'finish' 'LogPathText').Text = $ctx.LogFile
+    if ($sync.ReportScheduled) { (Get-UdpPageControl 'finish' 'ReportNote').Visibility = 'Visible' }
 
     $w.Controls.RunProgress.Visibility = 'Collapsed'
     # Collapse the log so the results and the restart buttons are visible without scrolling.

@@ -71,6 +71,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\UDP.ps1 -RevertBrowser
 - **Dry run.** See exactly what would happen, without changing anything.
 - **One window at a time.** Silent tools run hidden with their output in UDP's log panel. Interactive tools get a short guide first, and UDP continues by itself when you close them.
 - **One restart.** The tools' own restart prompts are suppressed; you restart once at the end.
+- **Before/after report.** UDP measures the PC when it starts and once more after the restart, then shows what changed: processes, RAM, services, startup entries, programs, apps and disk space.
 - **Readable code.** Windows PowerShell 5.1 and WPF, no external modules, no obfuscation, tested in CI.
 
 ## What's included
@@ -119,6 +120,7 @@ More in [docs/order-of-operations.md](docs/order-of-operations.md).
 - **Logs:** `%ProgramData%\UDP\logs\UDP_<date>_<time>.log`. Win11Debloat's own transcript goes to `%ProgramData%\UDP\logs\Win11Debloat`.
 - **Temporary files:** downloads go to `%TEMP%\UDP\work`, which is deleted at the end.
 - **Safe to run again** after a Windows feature update. Steps skip what is already done.
+- **`%ProgramData%\UDP\state.json`:** remembers what UDP can undo (the browser policies it set) and your last run. Please do not delete it.
 
 ## How to undo
 
@@ -235,7 +237,7 @@ Planned for the next `v0.1.x` releases:
 - [x] Win11Debloat: choose exactly which apps to remove (v0.1.5)
 - [x] Browser: replace Edge on the taskbar with the new browser (v0.1.6)
 - [x] Browser: make it the default for every web file and link type (v0.1.7)
-- [ ] Before/after report after the restart
+- [x] Before/after report after the restart (v0.1.8)
 
 See the [CHANGELOG](CHANGELOG.md) for what each release changed.
 

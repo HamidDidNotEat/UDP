@@ -161,6 +161,15 @@ function Invoke-UdpRun {
     Write-UdpLog "UDP run started$mode" -Level Step
     Write-UdpLog ('Order: Restore point -> {0}' -f (($plan | ForEach-Object { $_.Name }) -join ' -> ')) -Level Info
 
+    # 0. Measure the PC before any change, for the before/after report.
+    $before = $null
+    if (-not $Context.DryRun) {
+        $sync.CurrentStep = 'Measuring this PC before any change'
+        Write-UdpLog 'Measuring this PC before any change (for the before/after report)' -Level Info
+        try { $before = Get-UdpSnapshot }
+        catch { Write-UdpLog "Could not measure this PC: $($_.Exception.Message)" -Level Warning }
+    }
+
     # 1. Restore point
     Set-UdpStepState -Context $Context -Id 'restorepoint' -Status 'Running'
     $sync.CurrentStep = 'System Restore point'
@@ -222,7 +231,28 @@ function Invoke-UdpRun {
         }
     }
 
-    # 3. Cleanup
+    # 3. Remember this run; schedule the before/after report for the next sign-in.
+    if ($Context.DryRun) {
+        if ($Selection.Report) { Write-UdpLog '[dry run] would schedule the before/after report for the next sign-in' -Level DryRun }
+    }
+    else {
+        $reportPending = [bool]($Selection.Report -and $before)
+        if ($reportPending) {
+            try { Register-UdpReportTask -Context $Context }
+            catch {
+                $reportPending = $false
+                Write-UdpLog "Could not schedule the before/after report: $($_.Exception.Message)" -Level Warning
+            }
+        }
+        else {
+            # No report this time: remove a task left from an earlier run that never showed its report.
+            Unregister-UdpReportTask
+        }
+        $sync.ReportScheduled = $reportPending
+        Save-UdpLastRun -Context $Context -Before $before -Results $results.ToArray() -ReportPending $reportPending
+    }
+
+    # 4. Cleanup
     $sync.CurrentStep = 'Cleaning up'
     Invoke-UdpCleanup -Context $Context
     $sync.CurrentStep = 'Done'

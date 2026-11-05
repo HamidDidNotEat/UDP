@@ -4,6 +4,14 @@ All notable changes to Ultimate Debloat Pack are listed here. The format follows
 
 ## [Unreleased]
 
+## [0.1.8] - 2026-11-05
+
+### Added
+
+- **Before/after report.** When a run starts, UDP measures the PC: running processes, RAM in use, running services, startup entries, desktop programs, Store apps and free disk space. After the restart it opens once by itself (a one-time task at the next sign-in that removes itself), waits until Windows has settled, measures again and shows what changed. Reports are saved in `%ProgramData%\UDP\reports` (JSON and text).
+- The summary page has an option to turn the report off.
+- The welcome page shows when UDP last ran, with a button to open its report, and explains why `%ProgramData%\UDP\state.json` must not be deleted.
+
 ## [0.1.7] - 2026-11-05
 
 ### Added
@@ -86,7 +94,8 @@ Found during the first virtual machine test, planned for the next releases:
 - Edge removal can report "Failed" although Edge was removed: the result is checked before Edge's own uninstaller has finished.
 - Edge shortcuts (desktop, Start menu) stay behind after Edge removal and open an empty window.
 
-[Unreleased]: https://github.com/HamidDidNotEat/Ultimate-Debloat-Pack/compare/v0.1.7...HEAD
+[Unreleased]: https://github.com/HamidDidNotEat/Ultimate-Debloat-Pack/compare/v0.1.8...HEAD
+[0.1.8]: https://github.com/HamidDidNotEat/Ultimate-Debloat-Pack/compare/v0.1.7...v0.1.8
 [0.1.7]: https://github.com/HamidDidNotEat/Ultimate-Debloat-Pack/compare/v0.1.6...v0.1.7
 [0.1.6]: https://github.com/HamidDidNotEat/Ultimate-Debloat-Pack/compare/v0.1.5...v0.1.6
 [0.1.5]: https://github.com/HamidDidNotEat/Ultimate-Debloat-Pack/compare/v0.1.4...v0.1.5

@@ -210,7 +210,7 @@ function Remove-UdpBrowserPolicies {
         }
     }
 
-    Save-UdpState -State @{ BrowserPolicies = @(); SystemPolicies = @() }
+    Save-UdpState -State @{ BrowserPolicies = @(); SystemPolicies = @(); LastRun = $state.LastRun }
     Write-UdpLog "Browser policy revert finished: $removed policy entries removed. Restart the browser, and sign out and in again, to apply." -Level Success
     return $removed
 }

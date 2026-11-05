@@ -10,6 +10,7 @@
 | [NVCleanstall](nvcleanstall.md) | Recommended components and tweaks, the NVIDIA App trade-off |
 | [Autoruns](autoruns.md) | How to review startup entries safely |
 | [Order of operations](order-of-operations.md) | Why the steps run in this order, failures, the single restart |
+| [Before/after report](before-after-report.md) | What is measured, when, and how fair the comparison is |
 | [Undo guide](undo.md) | System Restore and how to undo each tool |
 
 Back to the [main README](../README.md).

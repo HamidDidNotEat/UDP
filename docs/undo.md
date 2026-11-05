@@ -28,7 +28,9 @@ If Windows does not start normally: boot into the recovery environment (hold Shi
 ## What UDP leaves on the PC
 
 - `%ProgramData%\UDP\logs\`: one log file per run, plus Win11Debloat's transcript.
-- `%ProgramData%\UDP\state.json`: the browser policies UDP created, so they can be reverted.
+- `%ProgramData%\UDP\state.json`: the browser policies UDP created, so they can be reverted, and your last run. **Please do not delete it**: without it UDP cannot undo those policies or show your before/after report.
+- `%ProgramData%\UDP\reports\`: your before/after reports.
+- `%ProgramData%\UDP\TaskbarLayout.xml` and `DefaultAssociations.xml`: the files behind the taskbar and default apps policies, if you used those options.
 - Programs you chose to keep: the browser, BCU in "Keep it installed" mode, NVCleanstall.
 
 Everything else (downloads, portable tools) lives in `%TEMP%\UDP` and is deleted at the end of the run. You can delete `%ProgramData%\UDP` at any time, but revert the browser policies first if you want UDP to remove them for you.

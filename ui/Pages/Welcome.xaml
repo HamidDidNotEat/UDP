@@ -35,6 +35,14 @@
             <TextBlock x:Name="PreflightWarningsText" Style="{StaticResource Body}" Margin="0"/>
         </Border>
 
+        <Border x:Name="LastRunBox" Style="{StaticResource InfoBox}" Visibility="Collapsed">
+            <StackPanel>
+                <TextBlock x:Name="LastRunText" Style="{StaticResource Body}"/>
+                <Button x:Name="OpenReportButton" Content="Open the before/after report" Style="{StaticResource SecondaryButton}"
+                        HorizontalAlignment="Left" Margin="0,2,0,2" Visibility="Collapsed"/>
+            </StackPanel>
+        </Border>
+
         <TextBlock Text="This PC" Style="{StaticResource SectionTitle}"/>
         <Border Style="{StaticResource Card}">
             <TextBlock x:Name="SystemInfo" FontFamily="Consolas" FontSize="12" TextWrapping="Wrap"
@@ -49,6 +57,9 @@
         <StackPanel Orientation="Horizontal" Margin="0,4,0,10">
             <Button x:Name="RevertPoliciesButton" Content="Revert browser policies created by UDP" Style="{StaticResource SecondaryButton}" Margin="0"/>
         </StackPanel>
+
+        <TextBlock Style="{StaticResource Muted}" Margin="0,4,0,8"
+                   Text="UDP keeps a small file, C:\ProgramData\UDP\state.json. Please do not delete it: UDP needs it to undo the browser policies it set and to show your before/after report."/>
 
         <CheckBox x:Name="AgreeCheck" Margin="0,8,0,0" FontWeight="SemiBold">
             <TextBlock TextWrapping="Wrap" Text="I have read the disclaimer, I have a backup or a VM snapshot, and I use UDP at my own risk."/>

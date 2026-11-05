@@ -127,6 +127,14 @@ if (Test-UdpBrowserInstalled -Browser $firefoxConfig) {
     $firefoxTypes = Get-UdpBrowserAssociations -Browser $firefoxConfig
     Assert-Udp ($firefoxTypes -and @($firefoxTypes.Associations | Where-Object { $_.Identifier -eq 'https' }).Count -eq 1) "Firefox's registered types are read ($(@($firefoxTypes.Associations).Count) types)"
 }
+Assert-Udp ((Format-UdpReportChange -Before 156 -After 126 -Decimals 0 -Unit '') -eq '-30 (-19%)') 'Report change: fewer processes'
+Assert-Udp ((Format-UdpReportChange -Before 2.9 -After 2.3 -Decimals 1 -Unit ' GB') -eq '-0.6 GB (-21%)') 'Report change: less RAM'
+Assert-Udp ((Format-UdpReportChange -Before 40 -After 40 -Decimals 0 -Unit '') -eq 'no change') 'Report change: no change'
+Assert-Udp ((Format-UdpDate '2026-11-05T19:30:00') -eq '5 November 2026, 19:30') 'Dates are shown in English'
+$snapshot = Get-UdpSnapshot
+Assert-Udp ($snapshot.Processes -gt 0 -and $snapshot.RamUsedGB -gt 0 -and $snapshot.DesktopPrograms -gt 0) "Snapshot measures this PC ($($snapshot.Processes) processes, $($snapshot.RamUsedGB) GB, $($snapshot.StartupEntries) startup entries, $($snapshot.StoreApps) Store apps)"
+$rows = @(Get-UdpReportRows -Before $snapshot -After $snapshot)
+Assert-Udp ($rows.Count -eq 7 -and @($rows | Where-Object { $_.Change -ne 'no change' }).Count -eq 0) 'Report rows compare every metric'
 $edgeShortcuts = @(Get-UdpEdgeShortcuts)
 Assert-Udp (@($edgeShortcuts | Where-Object { $_ -notlike '*.lnk' }).Count -eq 0) "Get-UdpEdgeShortcuts only returns shortcuts ($($edgeShortcuts.Count) found)"
 Assert-Udp ((Get-UdpSubjectOrganization 'CN="Brave Software, Inc.", O="Brave Software, Inc.", L=San Francisco') -eq 'Brave Software, Inc.') 'Quoted O= is parsed'
@@ -165,7 +173,7 @@ Write-Host 'XAML'
 if ($PSVersionTable.PSEdition -eq 'Desktop' -and [System.Threading.Thread]::CurrentThread.ApartmentState -eq 'STA') {
     . (Join-Path $root 'src\UI\Wizard.ps1')
     Initialize-UdpApplication -Root $root
-    foreach ($file in @(Get-Item (Join-Path $root 'ui\MainWindow.xaml')) + @(Get-ChildItem (Join-Path $root 'ui\Pages') -Filter '*.xaml')) {
+    foreach ($file in @(Get-ChildItem (Join-Path $root 'ui') -Recurse -Filter '*.xaml' | Where-Object { $_.Name -ne 'Styles.xaml' })) {
         try { $null = Import-UdpXaml -Path $file.FullName; Assert-Udp $true "$($file.Name) loads" }
         catch { Assert-Udp $false "$($file.Name) loads: $($_.Exception.InnerException.Message) $($_.Exception.Message)" }
     }
@@ -232,10 +240,11 @@ if ($DryRunSteps) {
         win11debloat = @{ Enabled = $true; Mode = 'Defaults' }
         shutup10     = @{ Enabled = $true; Mode = 'Gui' }
         bcu          = @{ Enabled = $true; Mode = 'RunOnce' }
-        browser      = @{ Enabled = $true; Browser = 'firefox'; Extensions = $true; ExtensionIds = @('uBlock0@raymondhill.net', 'jid1-MnnxcxisBPnSXQ@jetpack') }
+        browser      = @{ Enabled = $true; Browser = 'firefox'; Extensions = $true; ExtensionIds = @('uBlock0@raymondhill.net', 'jid1-MnnxcxisBPnSXQ@jetpack'); Taskbar = $true; SetDefault = $true }
         edge         = @{ Enabled = $true; RemoveWidgets = $false; RemoveXSocial = $false }
         nvcleanstall = @{ Enabled = $true }
         autoruns     = @{ Enabled = $true }
+        Report       = $true
     }
     Invoke-UdpRun -Context $context -Selection $selection
     $item = $null

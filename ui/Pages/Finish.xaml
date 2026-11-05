@@ -19,6 +19,8 @@
             <StackPanel>
                 <TextBlock Style="{StaticResource Body}"
                            Text="Restart Windows once to apply everything. UDP suppressed the restart prompts of the individual tools so that this is the only restart."/>
+                <TextBlock x:Name="ReportNote" Style="{StaticResource Body}" Visibility="Collapsed"
+                           Text="After the restart, sign in and wait a couple of minutes: UDP opens once by itself, waits until Windows has settled, and shows what changed."/>
                 <StackPanel Orientation="Horizontal" Margin="0,6,0,2">
                     <Button x:Name="RebootNowButton" Content="Restart now" Style="{StaticResource PrimaryButton}" Margin="0"/>
                     <Button x:Name="RebootLaterButton" Content="Restart later" Style="{StaticResource SecondaryButton}"/>

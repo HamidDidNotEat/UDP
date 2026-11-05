@@ -45,7 +45,9 @@ function Get-UdpState {
             }
         }
     }
-    return @{ BrowserPolicies = $policies; SystemPolicies = $system }
+    $lastRun = $null
+    if ($state -and $state.lastRun) { $lastRun = $state.lastRun }
+    return @{ BrowserPolicies = $policies; SystemPolicies = $system; LastRun = $lastRun }
 }
 
 function Save-UdpState {
@@ -83,7 +85,8 @@ function Save-UdpState {
         updated         = (Get-Date).ToString('s')
         browserPolicies = @($policies)
         systemPolicies  = @($system)
+        lastRun         = $State.LastRun
     }
-    $json = ConvertTo-Json -InputObject $document -Depth 6
+    $json = ConvertTo-Json -InputObject $document -Depth 8
     [System.IO.File]::WriteAllText($path, $json, (New-Object System.Text.UTF8Encoding($false)))
 }

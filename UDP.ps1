@@ -12,7 +12,12 @@
     Show what would happen without changing anything (can also be ticked on the welcome page).
 
 .PARAMETER RevertBrowserPolicies
-    Remove the browser extension policies UDP created, then exit. No wizard is shown.
+    Remove the browser policies UDP created (extensions, taskbar, default apps), then exit.
+    No wizard is shown.
+
+.PARAMETER Report
+    Show the before/after report. UDP starts itself with this switch once after the restart (a
+    one-time task); it then waits until Windows has settled and measures the PC again.
 
 .EXAMPLE
     .\UDP.ps1
@@ -24,7 +29,8 @@
 [CmdletBinding()]
 param(
     [switch]$DryRun,
-    [switch]$RevertBrowserPolicies
+    [switch]$RevertBrowserPolicies,
+    [switch]$Report
 )
 
 $ErrorActionPreference = 'Continue'
@@ -61,6 +67,7 @@ if (-not ($isAdmin -and $isDesktop -and $isSta)) {
     $arguments += @('-File', "`"$UdpScript`"")
     if ($DryRun) { $arguments += '-DryRun' }
     if ($RevertBrowserPolicies) { $arguments += '-RevertBrowserPolicies' }
+    if ($Report) { $arguments += '-Report' }
     try {
         Start-Process -FilePath $WindowsPowerShell -ArgumentList ($arguments -join ' ') -Verb RunAs -ErrorAction Stop
     }
@@ -99,6 +106,11 @@ try {
     if ($RevertBrowserPolicies) {
         Remove-UdpBrowserPolicies -Context $context | Out-Null
         Write-UdpLog "Log file: $($context.LogFile)" -Level Info
+        exit 0
+    }
+
+    if ($Report) {
+        Show-UdpReportMode -Context $context
         exit 0
     }
 
