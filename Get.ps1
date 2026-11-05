@@ -1,13 +1,13 @@
-# UDP (Ultimate Debloat Pack) bootstrap for the one-line start:
+# Ultimate Debloat Pack (UDP) bootstrap for the one-line start:
 #
-#   irm https://raw.githubusercontent.com/HamidDidNotEat/UDP/main/Get.ps1 | iex
+#   irm https://raw.githubusercontent.com/HamidDidNotEat/Ultimate-Debloat-Pack/main/Get.ps1 | iex
 #
 # It downloads the latest UDP release (UDP.zip), checks it against the SHA256SUMS file published
 # with the release, extracts it to %TEMP%\UDP\app and starts UDP.ps1 as administrator.
 # The extracted files are deleted when UDP closes. Nothing else is downloaded by this script.
 
 & {
-    $repository = 'HamidDidNotEat/UDP'   # keep in sync with "project.repository" in config/tools.json
+    $repository = 'HamidDidNotEat/Ultimate-Debloat-Pack'   # keep in sync with "project.repository" in config/tools.json
     $branch = 'main'
 
     $ErrorActionPreference = 'Stop'
@@ -19,7 +19,7 @@
     $archive = Join-Path $tempRoot 'UDP.zip'
     $headers = @{ 'User-Agent' = 'UDP'; 'Accept' = 'application/vnd.github+json' }
 
-    Write-Host 'UDP (Ultimate Debloat Pack)' -ForegroundColor Cyan
+    Write-Host 'Ultimate Debloat Pack (UDP)' -ForegroundColor Cyan
     New-Item -ItemType Directory -Path $tempRoot -Force | Out-Null
 
     try {

@@ -629,6 +629,17 @@ function Initialize-UdpWizard {
     }
     $controls.VersionText.Text = "Version $($Context.Config.project.version)"
 
+    $logoPath = Join-Path $root 'ui\logo.png'
+    if (Test-Path -LiteralPath $logoPath) {
+        $logo = New-Object System.Windows.Media.Imaging.BitmapImage
+        $logo.BeginInit()
+        $logo.UriSource = New-Object System.Uri($logoPath)
+        $logo.CacheOption = [System.Windows.Media.Imaging.BitmapCacheOption]::OnLoad
+        $logo.EndInit()
+        $window.Icon = $logo
+        $window.FindName('SidebarLogo').Source = $logo
+    }
+
     $pageDefinitions = @(
         @{ Id = 'welcome'; Title = 'Welcome'; File = 'Welcome.xaml'; Visible = { $true } }
         @{ Id = 'win11debloat'; Title = 'Win11Debloat'; File = 'Win11Debloat.xaml'; Visible = { $true } }

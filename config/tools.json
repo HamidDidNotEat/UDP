@@ -3,7 +3,7 @@
   "project": {
     "name": "UDP (Ultimate Debloat Pack)",
     "version": "0.1.0",
-    "repository": "HamidDidNotEat/UDP",
+    "repository": "HamidDidNotEat/Ultimate-Debloat-Pack",
     "branch": "main",
     "releaseAsset": "UDP.zip",
     "releaseChecksums": "SHA256SUMS"
